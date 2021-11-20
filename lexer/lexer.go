@@ -18,10 +18,8 @@ func GetTokens(input string) ([]token.Token, error) {
 	source = input
 	line = 1
 
-	var err error = nil
-
 	var tokens []token.Token
-	for current < length && err == nil {
+	for current < length {
 		c := peek()
 		if c == "(" {
 			c = consume()
@@ -32,12 +30,16 @@ func GetTokens(input string) ([]token.Token, error) {
 			r := token.Token{TokenType: token.RB, Lexeme: c, Line: 1}
 			tokens = append(tokens, r)
 		} else if isDigit(c) {
-			var t token.Token
-			t, err = consumeNumber()
+			t, err := consumeNumber()
+			if err != nil {
+				return tokens, err
+			}
 			tokens = append(tokens, t)
 		} else if c == "\"" {
-			var t token.Token
-			t, err = consumeString()
+			t, err := consumeString()
+			if err != nil {
+				return tokens, err
+			}
 			tokens = append(tokens, t)
 		} else if isWhitespace(c) {
 			current++
@@ -47,7 +49,7 @@ func GetTokens(input string) ([]token.Token, error) {
 		}
 	}
 
-	return tokens, err
+	return tokens, nil
 }
 
 func peek() string {
