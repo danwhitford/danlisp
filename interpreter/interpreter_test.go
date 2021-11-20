@@ -56,7 +56,7 @@ func TestErrorFuncNotFound(t *testing.T) {
 	assertString(t, "Runtime error. Could not find function 'nonsuch'.", err.Error())
 }
 
-func TestMoreBasicOperators(t *testing.T) {
+func TestMoreBasicOperators(t * testing.T) {
 	exprs := getExpressions("(* 2 7)")
 	ret, _ := Interpret(exprs)
 	assertNumber(t, 14, ret.(float64))
@@ -67,5 +67,23 @@ func TestMoreBasicOperators(t *testing.T) {
 
 	exprs = getExpressions("(mod 10 4)")
 	ret, _ = Interpret(exprs)
-	assertNumber(t, 2, float64(ret.(int)))
+	assertNumber(t, 2, ret.(float64))
+}
+
+func TestBitwiseOps(t *testing.T) {
+	exprs := getExpressions("(& 255 101)")
+	ret, _ := Interpret(exprs)
+	assertNumber(t, 101, ret.(float64))
+
+	exprs = getExpressions("(| 255 72)")
+	ret, _ = Interpret(exprs)
+	assertNumber(t, 255, ret.(float64))
+
+	exprs = getExpressions("(^ 0 72)")
+	ret, _ = Interpret(exprs)
+	assertNumber(t, 72, ret.(float64))
+
+	exprs = getExpressions("(&^ 255 72)")
+	ret, _ = Interpret(exprs)
+	assertNumber(t, 183, ret.(float64))
 }

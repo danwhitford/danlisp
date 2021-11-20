@@ -62,11 +62,19 @@ func evalSeq(ex expr.Seq) (interface{}, error) {
 
 func newEnvironment() map[string]interface{} {
 	env := make(map[string]interface{})
+	
+	// Basic operators
 	env["+"] = func(argv []interface{}) interface{} { return argv[0].(float64) + argv[1].(float64) }
 	env["-"] = func(argv []interface{}) interface{} { return argv[0].(float64) - argv[1].(float64) }
 	env["*"] = func(argv []interface{}) interface{} { return argv[0].(float64) * argv[1].(float64) }
 	env["/"] = func(argv []interface{}) interface{} { return argv[0].(float64) / argv[1].(float64) }
-	env["mod"] = func(argv []interface{}) interface{} { return int(argv[0].(float64)) % int(argv[1].(float64)) }
+	env["mod"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) % int(argv[1].(float64))) }
+
+	env["&"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) & int(argv[1].(float64))) }
+	env["|"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) | int(argv[1].(float64))) }
+	env["^"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) ^ int(argv[1].(float64))) }
+	env["&^"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) &^ int(argv[1].(float64))) }
+
 
 	return env
 }
