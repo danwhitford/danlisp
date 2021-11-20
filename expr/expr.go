@@ -9,3 +9,7 @@ type Atom struct {
 type Seq struct {
 	Exprs []Expr
 }
+
+type Symbol struct {
+	Name string
+}

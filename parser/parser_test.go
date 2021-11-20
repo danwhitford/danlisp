@@ -4,14 +4,7 @@ import (
 	"testing"
 	"whitford.io/danlisp/expr"
 	"whitford.io/danlisp/lexer"
-	"whitford.io/danlisp/token"
 )
-
-func assertType(t *testing.T, expected, actual token.TokenType) {
-	if expected != actual {
-		t.Fatalf("Assertion failed. Expected '%v' but got '%v'", expected, actual)
-	}
-}
 
 func assertString(t *testing.T, expected, actual string) {
 	if expected != actual {
@@ -47,5 +40,29 @@ func TestSeq(t *testing.T) {
 	for i := 0; i < 6; i++ {
 		val := seq.Exprs[i].(expr.Atom).Value.(float64)
 		assertNumber(t, float64(i), val)
+	}
+}
+
+
+func TestNestedSeq(t *testing.T) {
+	input := "(concat (0 1 2) (3 4 5))"
+	tokens, _ := lexer.GetTokens(input)
+	expressions, _ := GetExpressions(tokens)
+	sym, ok := expressions[0].(expr.Seq).Exprs[0].(expr.Symbol)
+	if !ok {
+		t.Fatalf("Expected symbol to be symbol")
+	}
+	assertString(t, "concat", sym.Name)
+
+	firstNested := expressions[0].(expr.Seq).Exprs[1].(expr.Seq)
+	for i := 0; i < 3; i++ {
+		val := firstNested.Exprs[i].(expr.Atom).Value.(float64)
+		assertNumber(t, float64(i), val)
+	}
+
+	secondNested := expressions[0].(expr.Seq).Exprs[2].(expr.Seq)
+	for i := 0; i < 3; i++ {
+		val := secondNested.Exprs[i].(expr.Atom).Value.(float64)
+		assertNumber(t, float64(i) + 3, val)
 	}
 }

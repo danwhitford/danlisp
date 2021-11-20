@@ -33,6 +33,10 @@ func GetExpressions(tokens []token.Token) ([]expr.Expr, error) {
 func getExpression() expr.Expr {
 	if source[current].TokenType == token.LB {
 		return consumeSeq()
+	} else if source[current].TokenType == token.KEYWORD {
+		e := expr.Symbol{Name: source[current].Lexeme}
+		current++
+		return e
 	} else {
 		e := expr.Atom{Value: source[current].Value}
 		current++
