@@ -1,10 +1,9 @@
 package lexer
 
 import (
-
+	"fmt"
 	"strconv"
 	"strings"
-	"fmt"
 	"whitford.io/danlisp/token"
 )
 
@@ -40,6 +39,8 @@ func GetTokens(input string) ([]token.Token, error) {
 			var t token.Token
 			t, err = consumeString()
 			tokens = append(tokens, t)
+		} else if isWhitespace(c) {
+			current++
 		} else {
 			t := consumeKeyword()
 			tokens = append(tokens, t)
@@ -62,6 +63,16 @@ func consume() string {
 func endsToken(c string) bool {
 	token_enders := []string{"(", ")", "/n", "/t", " "}
 	for _, cc := range token_enders {
+		if c == cc {
+			return true
+		}
+	}
+	return false
+}
+
+func isWhitespace(c string) bool {
+	whitespace := []string{" ", "\n", "\t"}
+	for _, cc := range whitespace {
 		if c == cc {
 			return true
 		}
@@ -110,15 +121,15 @@ func consumeString() (token.Token, error) {
 	for current < length && peek() != "\"" {
 		if peek() == "\n" {
 			return token.Token{}, fmt.Errorf("error while lexing on line %d. reached end of line in string '%v'", line, b.String())
-		}	
-		c = consume()	
+		}
+		c = consume()
 		b.WriteString(c)
 	}
 	if current == length {
 		return token.Token{}, fmt.Errorf("error while lexing on line %d. reached end of input in string '%v'", line, b.String())
 	}
 	b.WriteString(consume()) // Consume the final quote
-	lexeme := b.String() 
+	lexeme := b.String()
 	val, _ := strconv.Unquote(lexeme)
 
 	return token.Token{TokenType: token.LITERAL, Lexeme: lexeme, Value: val, Line: 1}, nil

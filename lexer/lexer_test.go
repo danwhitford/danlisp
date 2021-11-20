@@ -82,3 +82,13 @@ func TestEOFInString(t *testing.T) {
 	_, err := GetTokens(input)
 	assertString(t, err.Error(), "error while lexing on line 1. reached end of input in string '\"i am the fly'")
 }
+
+func TestSeq(t *testing.T) {
+	input := "(1 2 3)"
+	tokens, _ := GetTokens(input)
+	assertType(t, token.LB, tokens[0].TokenType)
+	assertType(t, token.LITERAL, tokens[1].TokenType)
+	assertType(t, token.LITERAL, tokens[2].TokenType)
+	assertType(t, token.LITERAL, tokens[3].TokenType)
+	assertType(t, token.RB, tokens[4].TokenType)
+}
