@@ -17,21 +17,22 @@ func GetExpressions(tokens []token.Token) ([]expr.Expr, error) {
 	source = tokens
 
 	exprs := []expr.Expr{}
-	var err error = nil
 
-	for current < length && err == nil {
-		var e expr.Expr
+	for current < length {
 		if tokens[current].TokenType == token.LB {
-			e, err = consumeSeq()
+			e, err := consumeSeq()
+			if err != nil {
+				return exprs, err
+			}
 			exprs = append(exprs, e)
 		} else {
-			e = expr.Atom{Value: tokens[current].Value}
+			e := expr.Atom{Value: tokens[current].Value}
 			exprs = append(exprs, e)
 			current++
 		}
 	}
 
-	return exprs, err
+	return exprs, nil
 }
 
 func getExpression() (expr.Expr, error) {
@@ -53,7 +54,10 @@ func consumeSeq() (expr.Seq, error) {
 
 	consume() // Consume the LB
 	for current < length && peek().TokenType != token.RB {
-		e, _ := getExpression()
+		e, err := getExpression()
+		if err != nil {
+			return expr.Seq{Exprs: seq}, err
+		}
 		seq = append(seq, e)
 	}
 	if current == length {
