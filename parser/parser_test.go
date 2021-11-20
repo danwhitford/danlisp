@@ -43,7 +43,6 @@ func TestSeq(t *testing.T) {
 	}
 }
 
-
 func TestNestedSeq(t *testing.T) {
 	input := "(concat (0 1 2) (3 4 5))"
 	tokens, _ := lexer.GetTokens(input)
@@ -63,6 +62,13 @@ func TestNestedSeq(t *testing.T) {
 	secondNested := expressions[0].(expr.Seq).Exprs[2].(expr.Seq)
 	for i := 0; i < 3; i++ {
 		val := secondNested.Exprs[i].(expr.Atom).Value.(float64)
-		assertNumber(t, float64(i) + 3, val)
+		assertNumber(t, float64(i)+3, val)
 	}
+}
+
+func TestErrorWhenSeqNotClosed(t *testing.T) {
+	input := "(+ 1 2 3 4"
+	tokens, _ := lexer.GetTokens(input)
+	_, err := GetExpressions(tokens)
+	assertString(t, "parse error. missing ')' to close sequence.", err.Error())
 }

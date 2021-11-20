@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"fmt"
+
 	"whitford.io/danlisp/expr"
 	"whitford.io/danlisp/token"
 )
@@ -15,43 +17,50 @@ func GetExpressions(tokens []token.Token) ([]expr.Expr, error) {
 	source = tokens
 
 	exprs := []expr.Expr{}
+	var err error = nil
 
-	for current < length {
+	for current < length && err == nil {
+		var e expr.Expr
 		if tokens[current].TokenType == token.LB {
-			e := consumeSeq()
+			e, err = consumeSeq()
 			exprs = append(exprs, e)
 		} else {
-			e := expr.Atom{Value: tokens[current].Value}
+			e = expr.Atom{Value: tokens[current].Value}
 			exprs = append(exprs, e)
 			current++
 		}
 	}
 
-	return exprs, nil
+	return exprs, err
 }
 
-func getExpression() expr.Expr {
+func getExpression() (expr.Expr, error) {
 	if source[current].TokenType == token.LB {
 		return consumeSeq()
 	} else if source[current].TokenType == token.KEYWORD {
 		e := expr.Symbol{Name: source[current].Lexeme}
 		current++
-		return e
+		return e, nil
 	} else {
 		e := expr.Atom{Value: source[current].Value}
 		current++
-		return e
+		return e, nil
 	}
 }
 
-func consumeSeq() expr.Seq {
+func consumeSeq() (expr.Seq, error) {
 	seq := []expr.Expr{}
+
 	consume() // Consume the LB
 	for current < length && peek().TokenType != token.RB {
-		seq = append(seq, getExpression())
+		e, _ := getExpression()
+		seq = append(seq, e)
+	}
+	if current == length {
+		return expr.Seq{}, fmt.Errorf("parse error. missing ')' to close sequence.")
 	}
 	consume() // Consume the RB
-	return expr.Seq{Exprs: seq}
+	return expr.Seq{Exprs: seq}, nil
 }
 
 func consume() token.Token {
