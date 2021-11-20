@@ -71,6 +71,14 @@ func TestString(t *testing.T) {
 	assertString(t, "i am the fly", tokens[0].Value.(string))
 }
 
-// Test for end of line in string
+func TestEOLInString(t *testing.T) {
+	input := "\"i am the fly\nfly in the fly in the\""
+	_, err := GetTokens(input)
+	assertString(t, err.Error(), "error while lexing on line 1. reached end of line in string '\"i am the fly'")
+}
 
-// Test gor end of file in string
+func TestEOFInString(t *testing.T) {
+	input := "\"i am the fly"
+	_, err := GetTokens(input)
+	assertString(t, err.Error(), "error while lexing on line 1. reached end of input in string '\"i am the fly'")
+}

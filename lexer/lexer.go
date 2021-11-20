@@ -107,9 +107,15 @@ func consumeString() (token.Token, error) {
 	var b strings.Builder
 	var c string
 	b.WriteString(consume()) // Consume the first quote
-	for current < length && peek() != "\"" {		
+	for current < length && peek() != "\"" {
+		if peek() == "\n" {
+			return token.Token{}, fmt.Errorf("error while lexing on line %d. reached end of line in string '%v'", line, b.String())
+		}	
 		c = consume()	
 		b.WriteString(c)
+	}
+	if current == length {
+		return token.Token{}, fmt.Errorf("error while lexing on line %d. reached end of input in string '%v'", line, b.String())
 	}
 	b.WriteString(consume()) // Consume the final quote
 	lexeme := b.String() 
