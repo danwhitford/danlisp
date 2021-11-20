@@ -87,3 +87,13 @@ func TestBitwiseOps(t *testing.T) {
 	ret, _ = Interpret(exprs)
 	assertNumber(t, 183, ret.(float64))
 }
+
+func TestShifts(t *testing.T) {
+	exprs := getExpressions("(>> 255 2)")
+	ret, _ := Interpret(exprs)
+	assertNumber(t, 63, ret.(float64))
+
+	exprs = getExpressions("(<< 255 2)")
+	ret, _ = Interpret(exprs)
+	assertNumber(t, 1020, ret.(float64))
+}
