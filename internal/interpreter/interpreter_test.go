@@ -3,9 +3,9 @@ package interpreter
 import (
 	"testing"
 
-	"whitford.io/danlisp/expr"
-	"whitford.io/danlisp/lexer"
-	"whitford.io/danlisp/parser"
+	"whitford.io/danlisp/internal/expr"
+	"whitford.io/danlisp/internal/lexer"
+	"whitford.io/danlisp/internal/parser"
 )
 
 func assertString(t *testing.T, expected, actual string) {
@@ -56,7 +56,7 @@ func TestErrorFuncNotFound(t *testing.T) {
 	assertString(t, "Runtime error. Could not find function 'nonsuch'.", err.Error())
 }
 
-func TestMoreBasicOperators(t * testing.T) {
+func TestMoreBasicOperators(t *testing.T) {
 	exprs := getExpressions("(* 2 7)")
 	ret, _ := Interpret(exprs)
 	assertNumber(t, 14, ret.(float64))

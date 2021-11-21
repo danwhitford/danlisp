@@ -2,7 +2,7 @@ package lexer
 
 import (
 	"testing"
-	"whitford.io/danlisp/token"
+	"whitford.io/danlisp/internal/token"
 )
 
 func assertType(t *testing.T, expected, actual token.TokenType) {

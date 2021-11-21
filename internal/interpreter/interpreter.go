@@ -3,7 +3,7 @@ package interpreter
 import (
 	"fmt"
 
-	"whitford.io/danlisp/expr"
+	"whitford.io/danlisp/internal/expr"
 )
 
 var environment map[string]interface{}

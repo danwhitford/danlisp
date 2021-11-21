@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"whitford.io/danlisp/token"
+	"whitford.io/danlisp/internal/token"
 )
 
 var length int

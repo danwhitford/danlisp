@@ -3,8 +3,8 @@ package parser
 import (
 	"fmt"
 
-	"whitford.io/danlisp/expr"
-	"whitford.io/danlisp/token"
+	"whitford.io/danlisp/internal/expr"
+	"whitford.io/danlisp/internal/token"
 )
 
 var current int

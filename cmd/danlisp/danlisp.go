@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"whitford.io/danlisp/interpreter"
-	"whitford.io/danlisp/lexer"
-	"whitford.io/danlisp/parser"
+	"whitford.io/danlisp/internal/interpreter"
+	"whitford.io/danlisp/internal/lexer"
+	"whitford.io/danlisp/internal/parser"
 )
 
 var header string = `

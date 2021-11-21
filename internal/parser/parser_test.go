@@ -2,8 +2,9 @@ package parser
 
 import (
 	"testing"
-	"whitford.io/danlisp/expr"
-	"whitford.io/danlisp/lexer"
+
+	"whitford.io/danlisp/internal/expr"
+	"whitford.io/danlisp/internal/lexer"
 )
 
 func assertString(t *testing.T, expected, actual string) {
