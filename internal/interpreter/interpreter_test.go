@@ -127,3 +127,21 @@ func TestEquals(t *testing.T) {
 	ret, _ = Interpret(exprs)
 	assert(t, !ret.(bool))
 }
+
+func TestAndOr(t *testing.T) {
+	exprs := getExpressions("(and (= 2 2) (= 5 5))")
+	ret, _ := Interpret(exprs)
+	assert(t, ret.(bool))
+
+	exprs = getExpressions("(and (= 2 2) (= 1 5))")
+	ret, _ = Interpret(exprs)
+	assert(t, !ret.(bool))
+
+	exprs = getExpressions("(or (= 2 2) (= 1 5))")
+	ret, _ = Interpret(exprs)
+	assert(t, ret.(bool))
+
+	exprs = getExpressions("(or (= 2 5) (= 1 5))")
+	ret, _ = Interpret(exprs)
+	assert(t, !ret.(bool))
+}

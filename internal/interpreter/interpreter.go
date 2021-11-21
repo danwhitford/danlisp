@@ -100,8 +100,17 @@ func NewEnvironment() map[string]interface{} {
 	env[">>"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) >> int(argv[1].(float64))) }
 	env["<<"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) << int(argv[1].(float64))) }
 
-	// Boleans
+	// Boleans	
 	env["="] = func(argv []interface{}) interface{} { return argv[0] == argv[1] }
+	env["and"] = func(argv []interface{}) interface{} { return isTruthy(argv[0]) && isTruthy(argv[1]) }
+	env["or"] = func(argv []interface{}) interface{} { return isTruthy(argv[0]) || isTruthy(argv[1]) }
 
 	return env
+}
+
+func isTruthy(v interface{}) bool {
+	if b, ok := v.(bool); ok {
+		return b
+	}
+	return v != nil
 }
