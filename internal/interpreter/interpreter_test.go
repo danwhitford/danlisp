@@ -20,6 +20,12 @@ func assertNumber(t *testing.T, expected, actual float64) {
 	}
 }
 
+func assert(t *testing.T, b bool) {
+	if !b {
+		t.Fatalf("Expected true but was false")
+	}
+}
+
 func getExpressions(input string) []expr.Expr {
 	tokens, _ := lexer.GetTokens(input)
 	exprs, _ := parser.GetExpressions(tokens)
@@ -102,4 +108,22 @@ func TestDefinition(t *testing.T) {
 	exprs := getExpressions("(def foo 10) (* foo 5)")
 	ret, _ := Interpret(exprs)
 	assertNumber(t, 50, ret.(float64))
+}
+
+func TestEquals(t *testing.T) {
+	exprs := getExpressions("(def foo 10) (= foo 10)")
+	ret, _ := Interpret(exprs)
+	assert(t, ret.(bool))
+
+	exprs = getExpressions("(def foo 10) (= foo 5)")
+	ret, _ = Interpret(exprs)
+	assert(t, !ret.(bool))
+
+	exprs = getExpressions("(def bar \"dan\") (= bar \"dan\")")
+	ret, _ = Interpret(exprs)
+	assert(t, ret.(bool))
+
+	exprs = getExpressions("(def bar \"dan\") (= foo \"egg\")")
+	ret, _ = Interpret(exprs)
+	assert(t, !ret.(bool))
 }

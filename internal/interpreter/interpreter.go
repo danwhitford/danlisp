@@ -72,7 +72,7 @@ func evalSeq(ex expr.Seq) (interface{}, error) {
 		arg, _ := eval(argex)
 		args = append(args, arg)
 	}
-	applyer, _ := symbol.(func(argv []interface{}) interface{})
+	applyer := symbol.(func(argv []interface{}) interface{})
 	return applyer(args), nil
 }
 
@@ -99,6 +99,9 @@ func NewEnvironment() map[string]interface{} {
 	env["&^"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) &^ int(argv[1].(float64))) }
 	env[">>"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) >> int(argv[1].(float64))) }
 	env["<<"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) << int(argv[1].(float64))) }
+
+	// Boleans
+	env["="] = func(argv []interface{}) interface{} { return argv[0] == argv[1] }
 
 	return env
 }
