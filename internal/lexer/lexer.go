@@ -44,8 +44,12 @@ func GetTokens(input string) ([]token.Token, error) {
 		} else if isWhitespace(c) {
 			current++
 		} else {
-			t := consumeKeyword()
-			tokens = append(tokens, t)
+			lexeme := consumeLexeme()
+			if lexeme == "def" {
+				tokens = append(tokens, token.Token{TokenType: token.DEF, Lexeme: lexeme, Line: line})
+			} else {
+				tokens = append(tokens, token.Token{TokenType: token.KEYWORD, Lexeme: lexeme, Line: line})
+			}
 		}
 	}
 
@@ -82,15 +86,25 @@ func isWhitespace(c string) bool {
 	return false
 }
 
-func consumeKeyword() token.Token {
+func consumeLexeme() string {
 	var b strings.Builder
 	var c string
 	for current < length && !endsToken(peek()) {
 		c = consume()
 		b.WriteString(c)
 	}
-	return token.Token{TokenType: token.KEYWORD, Lexeme: b.String(), Line: 1}
+	return b.String()
 }
+
+// func consumeKeyword() token.Token {
+// 	var b strings.Builder
+// 	var c string
+// 	for current < length && !endsToken(peek()) {
+// 		c = consume()
+// 		b.WriteString(c)
+// 	}
+// 	return token.Token{TokenType: token.KEYWORD, Lexeme: b.String(), Line: 1}
+// }
 
 func consumeNumber() (token.Token, error) {
 	var b strings.Builder

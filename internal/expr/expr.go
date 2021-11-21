@@ -13,3 +13,8 @@ type Seq struct {
 type Symbol struct {
 	Name string
 }
+
+type Def struct {
+	Var   Symbol
+	Value Expr
+}

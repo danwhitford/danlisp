@@ -22,6 +22,7 @@ ______            _     _
 
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
+	env := interpreter.NewEnvironment()
 
 	fmt.Println(header)
 	for {
@@ -31,7 +32,7 @@ func main() {
 			break
 		}
 		line := scanner.Text()
-		
+
 		if len(line) < 1 {
 			continue
 		}
@@ -46,12 +47,12 @@ func main() {
 			fmt.Println(err.Error())
 			continue
 		}
-		res, err := interpreter.Interpret(exprs)
+		res, err := interpreter.InterpretPersistant(exprs, env)
 		if err != nil {
 			fmt.Println(err.Error())
 			continue
 		}
-		
+
 		fmt.Printf("%v\n", res)
 	}
 }

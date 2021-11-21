@@ -53,7 +53,7 @@ func TestSubtract(t *testing.T) {
 func TestErrorFuncNotFound(t *testing.T) {
 	exprs := getExpressions("(nonsuch 2 7)")
 	_, err := Interpret(exprs)
-	assertString(t, "Runtime error. Could not find function 'nonsuch'.", err.Error())
+	assertString(t, "Runtime error. Could not find symbol 'nonsuch'.", err.Error())
 }
 
 func TestMoreBasicOperators(t *testing.T) {
@@ -96,4 +96,10 @@ func TestShifts(t *testing.T) {
 	exprs = getExpressions("(<< 255 2)")
 	ret, _ = Interpret(exprs)
 	assertNumber(t, 1020, ret.(float64))
+}
+
+func TestDefinition(t *testing.T) {
+	exprs := getExpressions("(def foo 10) (* foo 5)")
+	ret, _ := Interpret(exprs)
+	assertNumber(t, 50, ret.(float64))
 }

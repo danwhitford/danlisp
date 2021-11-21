@@ -7,6 +7,7 @@ const (
 	RB
 	KEYWORD
 	LITERAL
+	DEF
 )
 
 type Token struct {

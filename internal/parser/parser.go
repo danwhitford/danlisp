@@ -20,11 +20,19 @@ func GetExpressions(tokens []token.Token) ([]expr.Expr, error) {
 
 	for current < length {
 		if tokens[current].TokenType == token.LB {
-			e, err := consumeSeq()
-			if err != nil {
-				return exprs, err
+			if next().TokenType == token.DEF {
+				e, err := consumeDef()
+				if err != nil {
+					return exprs, err
+				}
+				exprs = append(exprs, e)
+			} else {
+				e, err := consumeSeq()
+				if err != nil {
+					return exprs, err
+				}
+				exprs = append(exprs, e)
 			}
-			exprs = append(exprs, e)
 		} else {
 			e := expr.Atom{Value: tokens[current].Value}
 			exprs = append(exprs, e)
@@ -67,6 +75,19 @@ func consumeSeq() (expr.Seq, error) {
 	return expr.Seq{Exprs: seq}, nil
 }
 
+func consumeDef() (expr.Def, error) {
+	consume() // Consume the LB
+	consume() // Consume the def
+	va := consume()
+	if va.TokenType != token.KEYWORD {
+		return expr.Def{}, fmt.Errorf("parser error. trying to assign to '%v'", va.Lexeme)
+	}
+	sy := expr.Symbol{Name: va.Lexeme}
+	val, _ := getExpression()
+	consume() // Consume the RB
+	return expr.Def{Var: sy, Value: val}, nil
+}
+
 func consume() token.Token {
 	s := source[current]
 	current++
@@ -75,4 +96,8 @@ func consume() token.Token {
 
 func peek() token.Token {
 	return source[current]
+}
+
+func next() token.Token {
+	return source[current+1]
 }

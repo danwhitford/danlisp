@@ -73,3 +73,15 @@ func TestErrorWhenSeqNotClosed(t *testing.T) {
 	_, err := GetExpressions(tokens)
 	assertString(t, "parse error. missing ')' to close sequence.", err.Error())
 }
+
+func TestDefinition(t *testing.T) {
+	input := "(def x 5)"
+	tokens, _ := lexer.GetTokens(input)
+	exprs, _ := GetExpressions(tokens)
+	defe, ok := exprs[0].(expr.Def)
+	if !ok {
+		t.Fatalf("Conversion to Def expression failed")
+	}
+	assertString(t, defe.Var.Name, "x")
+	assertNumber(t, 5, defe.Value.(expr.Atom).Value.(float64))
+}

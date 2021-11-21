@@ -92,3 +92,13 @@ func TestSeq(t *testing.T) {
 	assertType(t, token.LITERAL, tokens[3].TokenType)
 	assertType(t, token.RB, tokens[4].TokenType)
 }
+
+func TestDefinition(t *testing.T) {
+	input := "(def x 5)"
+	tokens, _ := GetTokens(input)
+	assertType(t, token.LB, tokens[0].TokenType)
+	assertType(t, token.DEF, tokens[1].TokenType)
+	assertType(t, token.KEYWORD, tokens[2].TokenType)
+	assertType(t, token.LITERAL, tokens[3].TokenType)
+	assertType(t, token.RB, tokens[4].TokenType)
+}
