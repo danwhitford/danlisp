@@ -24,14 +24,34 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	fmt.Println(header)
-	fmt.Print(">>> ")
-	for scanner.Scan() {
-		line := scanner.Text()
-		tokens, _ := lexer.GetTokens(line)
-		exprs, _ := parser.GetExpressions(tokens)
-		res, _ := interpreter.Interpret(exprs)
-		fmt.Printf("%v\n", res)
-
+	for {
 		fmt.Print(">>> ")
+		scanned := scanner.Scan()
+		if !scanned {
+			break
+		}
+		line := scanner.Text()
+		
+		if len(line) < 1 {
+			continue
+		}
+
+		tokens, err := lexer.GetTokens(line)
+		if err != nil {
+			fmt.Println(err.Error())
+			continue
+		}
+		exprs, err := parser.GetExpressions(tokens)
+		if err != nil {
+			fmt.Println(err.Error())
+			continue
+		}
+		res, err := interpreter.Interpret(exprs)
+		if err != nil {
+			fmt.Println(err.Error())
+			continue
+		}
+		
+		fmt.Printf("%v\n", res)
 	}
 }
