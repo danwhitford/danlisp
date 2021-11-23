@@ -145,3 +145,13 @@ func TestAndOr(t *testing.T) {
 	ret, _ = Interpret(exprs)
 	assert(t, !ret.(bool))
 }
+
+func TestIfExpr(t *testing.T) {
+	exprs := getExpressions(`(if (= 2 2) "yes" "no")`)
+	ret, _ := Interpret(exprs)
+	assertString(t, "yes", ret.(string))
+
+	exprs = getExpressions(`(if (= (+2 2) 5) "yes" "no")`)
+	ret, _ = Interpret(exprs)
+	assertString(t, "no", ret.(string))
+}

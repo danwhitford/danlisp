@@ -47,6 +47,8 @@ func GetTokens(input string) ([]token.Token, error) {
 			lexeme := consumeLexeme()
 			if lexeme == "def" {
 				tokens = append(tokens, token.Token{TokenType: token.DEF, Lexeme: lexeme, Line: line})
+			} else if lexeme == "if" {
+				tokens = append(tokens, token.Token{TokenType: token.IF, Lexeme: lexeme, Line: line})
 			} else {
 				tokens = append(tokens, token.Token{TokenType: token.KEYWORD, Lexeme: lexeme, Line: line})
 			}

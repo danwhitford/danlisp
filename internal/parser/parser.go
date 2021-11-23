@@ -19,42 +19,40 @@ func GetExpressions(tokens []token.Token) ([]expr.Expr, error) {
 	exprs := []expr.Expr{}
 
 	for current < length {
-		if tokens[current].TokenType == token.LB {
-			if next().TokenType == token.DEF {
-				e, err := consumeDef()
-				if err != nil {
-					return exprs, err
-				}
-				exprs = append(exprs, e)
-			} else {
-				e, err := consumeSeq()
-				if err != nil {
-					return exprs, err
-				}
-				exprs = append(exprs, e)
-			}
-		} else {
-			e := expr.Atom{Value: tokens[current].Value}
-			exprs = append(exprs, e)
-			current++
+		expr, err := getExpression()
+		if err != nil {
+			return exprs, err
 		}
+		exprs = append(exprs, expr)
 	}
 
 	return exprs, nil
 }
 
 func getExpression() (expr.Expr, error) {
-	if source[current].TokenType == token.LB {
-		return consumeSeq()
-	} else if source[current].TokenType == token.KEYWORD {
-		e := expr.Symbol{Name: source[current].Lexeme}
-		current++
-		return e, nil
-	} else {
-		e := expr.Atom{Value: source[current].Value}
-		current++
-		return e, nil
+	switch peek().TokenType {
+	case token.LB:
+		if next().TokenType == token.DEF {
+			return consumeDef()
+		} else if next().TokenType == token.IF {
+			return consumeIf()
+		} else {
+			return consumeSeq()
+		}
+	case token.KEYWORD:
+		return consumeKeyword()
+	default:
+		return consumeAtom()
 	}
+}
+
+func consumeKeyword() (expr.Symbol, error) {
+	return expr.Symbol{Name: consume().Lexeme}, nil
+}
+
+func consumeAtom() (expr.Atom, error) {
+	e := expr.Atom{Value: consume().Value}
+	return e, nil
 }
 
 func consumeSeq() (expr.Seq, error) {
@@ -86,6 +84,25 @@ func consumeDef() (expr.Def, error) {
 	val, _ := getExpression()
 	consume() // Consume the RB
 	return expr.Def{Var: sy, Value: val}, nil
+}
+
+func consumeIf() (expr.If, error) {
+	consume() // Consume the LB
+	consume() // Consume the if
+	cond, err := getExpression()
+	if err != nil {
+		return expr.If{}, err
+	}
+	trueBranch, err := getExpression()
+	if err != nil {
+		return expr.If{}, err
+	}
+	falseBranch, err := getExpression()
+	if err != nil {
+		return expr.If{}, err
+	}
+	consume() // Consume the RB
+	return expr.If{Cond: cond, TrueBranch: trueBranch, FalseBranch: falseBranch}, nil
 }
 
 func consume() token.Token {

@@ -102,3 +102,10 @@ func TestDefinition(t *testing.T) {
 	assertType(t, token.LITERAL, tokens[3].TokenType)
 	assertType(t, token.RB, tokens[4].TokenType)
 }
+
+func TestIf(t *testing.T) {
+	input := "(if (= 5 x))"
+	tokens, _ := GetTokens(input)
+	assertType(t, token.LB, tokens[0].TokenType)
+	assertType(t, token.IF, tokens[1].TokenType)
+}

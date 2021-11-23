@@ -8,6 +8,7 @@ const (
 	KEYWORD
 	LITERAL
 	DEF
+	IF
 )
 
 type Token struct {

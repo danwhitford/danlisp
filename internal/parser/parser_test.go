@@ -85,3 +85,22 @@ func TestDefinition(t *testing.T) {
 	assertString(t, defe.Var.Name, "x")
 	assertNumber(t, 5, defe.Value.(expr.Atom).Value.(float64))
 }
+
+func TestIf(t *testing.T) {
+	input := `(if (= 2 2) "yes" "no")`
+	tokens, _ := lexer.GetTokens(input)
+	exprs, _ := GetExpressions(tokens)
+	ife, ok := exprs[0].(expr.If)
+	if !ok {
+		t.Fatalf("Conversion to If expression failed")
+	}
+	if ife.Cond.(expr.Seq).Exprs[0].(expr.Symbol).Name != "=" {
+		t.Fatal("Condition wasn't right")
+	}
+	if ife.TrueBranch.(expr.Atom).Value != "yes" {
+		t.Fatal("True branch wasn't right")
+	}
+	if ife.FalseBranch.(expr.Atom).Value != "no" {
+		t.Fatal("False branch wasn't right")
+	}
+}

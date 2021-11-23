@@ -28,23 +28,18 @@ func InterpretPersistant(exprs []expr.Expr, env map[string]interface{}) (interfa
 }
 
 func eval(ex expr.Expr) (interface{}, error) {
-	atom, ok := ex.(expr.Atom)
-	if ok {
-		return evalAtom(atom), nil
-	}
 
-	seq, ok := ex.(expr.Seq)
-	if ok {
-		return evalSeq(seq)
-	}
-
-	symbol, ok := ex.(expr.Symbol)
-	if ok {
-		return evalSymbol(symbol)
-	}
-
-	if def, ok := ex.(expr.Def); ok {
-		return evalDef(def)
+	switch v := ex.(type) {
+	case expr.Atom:
+		return evalAtom(v), nil
+	case expr.Seq:
+		return evalSeq(v)
+	case expr.Symbol:
+		return evalSymbol(v)
+	case expr.Def:
+		return evalDef(v)
+	case expr.If:
+		return evalIf(v)
 	}
 
 	panic("Don't know how to eval this thing")
@@ -82,6 +77,17 @@ func evalDef(ex expr.Def) (interface{}, error) {
 	return val, err
 }
 
+func evalIf(iff expr.If) (interface{}, error) {
+	cond, _ := eval(iff.Cond)
+	var expr expr.Expr
+	if isTruthy(cond) {
+		expr = iff.TrueBranch
+	} else {
+		expr = iff.FalseBranch
+	}
+	return eval(expr)
+}
+
 func NewEnvironment() map[string]interface{} {
 	env := make(map[string]interface{})
 
@@ -100,7 +106,7 @@ func NewEnvironment() map[string]interface{} {
 	env[">>"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) >> int(argv[1].(float64))) }
 	env["<<"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) << int(argv[1].(float64))) }
 
-	// Boleans	
+	// Boleans
 	env["="] = func(argv []interface{}) interface{} { return argv[0] == argv[1] }
 	env["and"] = func(argv []interface{}) interface{} { return isTruthy(argv[0]) && isTruthy(argv[1]) }
 	env["or"] = func(argv []interface{}) interface{} { return isTruthy(argv[0]) || isTruthy(argv[1]) }

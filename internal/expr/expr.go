@@ -18,3 +18,9 @@ type Def struct {
 	Var   Symbol
 	Value Expr
 }
+
+type If struct {
+	Cond        Expr
+	TrueBranch  Expr
+	FalseBranch Expr
+}
