@@ -3,9 +3,9 @@ package interpreter
 import (
 	"testing"
 
-	"whitford.io/danlisp/internal/expr"
-	"whitford.io/danlisp/internal/lexer"
-	"whitford.io/danlisp/internal/parser"
+	"github.com/shaftoe44/danlisp/internal/expr"
+	"github.com/shaftoe44/danlisp/internal/lexer"
+	"github.com/shaftoe44/danlisp/internal/parser"
 )
 
 func assertString(t *testing.T, expected, actual string) {
