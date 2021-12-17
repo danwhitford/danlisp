@@ -29,6 +29,7 @@ func assert(t *testing.T, b bool) {
 func getExpressions(input string) []expr.Expr {
 	lex := lexer.NewLexer(input)
 	tokens, _ := lex.GetTokens()
+	parser := parser.NewParser(tokens)
 	exprs, _ := parser.GetExpressions(tokens)
 	return exprs
 }

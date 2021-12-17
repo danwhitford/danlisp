@@ -7,19 +7,25 @@ import (
 	"github.com/shaftoe44/danlisp/internal/token"
 )
 
-var current int
-var length int
-var source []token.Token
+type Parser struct {
+	current int
+	length int
+	source []token.Token
+}
 
-func GetExpressions(tokens []token.Token) ([]expr.Expr, error) {
-	current = 0
-	length = len(tokens)
-	source = tokens
+func NewParser(tokens []token.Token) Parser {
+	return Parser{
+		current: 0,
+		length: len(tokens),
+		source: tokens,
+	}
+}
 
+func (parser *Parser) GetExpressions(tokens []token.Token) ([]expr.Expr, error) {
 	exprs := []expr.Expr{}
 
-	for current < length {
-		expr, err := getExpression()
+	for parser.current < parser.length {
+		expr, err := parser.getExpression()
 		if err != nil {
 			return exprs, err
 		}
@@ -29,92 +35,92 @@ func GetExpressions(tokens []token.Token) ([]expr.Expr, error) {
 	return exprs, nil
 }
 
-func getExpression() (expr.Expr, error) {
-	switch peek().TokenType {
+func (parser *Parser) getExpression() (expr.Expr, error) {
+	switch parser.peek().TokenType {
 	case token.LB:
-		if next().TokenType == token.DEF {
-			return consumeDef()
-		} else if next().TokenType == token.IF {
-			return consumeIf()
+		if parser.next().TokenType == token.DEF {
+			return parser.consumeDef()
+		} else if parser.next().TokenType == token.IF {
+			return parser.consumeIf()
 		} else {
-			return consumeSeq()
+			return parser.consumeSeq()
 		}
 	case token.KEYWORD:
-		return consumeKeyword()
+		return parser.consumeKeyword()
 	default:
-		return consumeAtom()
+		return parser.consumeAtom()
 	}
 }
 
-func consumeKeyword() (expr.Symbol, error) {
-	return expr.Symbol{Name: consume().Lexeme}, nil
+func (parser *Parser) consumeKeyword() (expr.Symbol, error) {
+	return expr.Symbol{Name: parser.consume().Lexeme}, nil
 }
 
-func consumeAtom() (expr.Atom, error) {
-	e := expr.Atom{Value: consume().Value}
+func (parser *Parser) consumeAtom() (expr.Atom, error) {
+	e := expr.Atom{Value: parser.consume().Value}
 	return e, nil
 }
 
-func consumeSeq() (expr.Seq, error) {
+func (parser *Parser) consumeSeq() (expr.Seq, error) {
 	seq := []expr.Expr{}
 
-	consume() // Consume the LB
-	for current < length && peek().TokenType != token.RB {
-		e, err := getExpression()
+	parser.consume() // Consume the LB
+	for parser.current < parser.length && parser.peek().TokenType != token.RB {
+		e, err := parser.getExpression()
 		if err != nil {
 			return expr.Seq{Exprs: seq}, err
 		}
 		seq = append(seq, e)
 	}
-	if current == length {
+	if parser.current == parser.length {
 		return expr.Seq{}, fmt.Errorf("parse error. missing ')' to close sequence.")
 	}
-	consume() // Consume the RB
+	parser.consume() // Consume the RB
 	return expr.Seq{Exprs: seq}, nil
 }
 
-func consumeDef() (expr.Def, error) {
-	consume() // Consume the LB
-	consume() // Consume the def
-	va := consume()
+func (parser *Parser) consumeDef() (expr.Def, error) {
+	parser.consume() // Consume the LB
+	parser.consume() // Consume the def
+	va := parser.consume()
 	if va.TokenType != token.KEYWORD {
 		return expr.Def{}, fmt.Errorf("parser error. trying to assign to '%v'", va.Lexeme)
 	}
 	sy := expr.Symbol{Name: va.Lexeme}
-	val, _ := getExpression()
-	consume() // Consume the RB
+	val, _ := parser.getExpression()
+	parser.consume() // Consume the RB
 	return expr.Def{Var: sy, Value: val}, nil
 }
 
-func consumeIf() (expr.If, error) {
-	consume() // Consume the LB
-	consume() // Consume the if
-	cond, err := getExpression()
+func (parser *Parser) consumeIf() (expr.If, error) {
+	parser.consume() // Consume the LB
+	parser.consume() // Consume the if
+	cond, err := parser.getExpression()
 	if err != nil {
 		return expr.If{}, err
 	}
-	trueBranch, err := getExpression()
+	trueBranch, err := parser.getExpression()
 	if err != nil {
 		return expr.If{}, err
 	}
-	falseBranch, err := getExpression()
+	falseBranch, err := parser.getExpression()
 	if err != nil {
 		return expr.If{}, err
 	}
-	consume() // Consume the RB
+	parser.consume() // Consume the RB
 	return expr.If{Cond: cond, TrueBranch: trueBranch, FalseBranch: falseBranch}, nil
 }
 
-func consume() token.Token {
-	s := source[current]
-	current++
+func (parser *Parser) consume() token.Token {
+	s := parser.source[parser.current]
+	parser.current++
 	return s
 }
 
-func peek() token.Token {
-	return source[current]
+func (parser *Parser) peek() token.Token {
+	return parser.source[parser.current]
 }
 
-func next() token.Token {
-	return source[current+1]
+func (parser *Parser) next() token.Token {
+	return parser.source[parser.current+1]
 }

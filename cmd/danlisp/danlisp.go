@@ -23,6 +23,8 @@ ______            _     _
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	env := interpreter.NewEnvironment()
+	var lxr lexer.Lexer
+	var psr parser.Parser
 
 	fmt.Println(header)
 	for {
@@ -37,13 +39,14 @@ func main() {
 			continue
 		}
 
-		lex := lexer.NewLexer(line)
-		tokens, err := lex.GetTokens()
+		lxr = lexer.NewLexer(line)
+		tokens, err := lxr.GetTokens()
 		if err != nil {
 			fmt.Println(err.Error())
 			continue
 		}
-		exprs, err := parser.GetExpressions(tokens)
+		psr = parser.NewParser(tokens)
+		exprs, _ := psr.GetExpressions(tokens)
 		if err != nil {
 			fmt.Println(err.Error())
 			continue
