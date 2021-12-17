@@ -51,7 +51,7 @@ func evalAtom(ex expr.Atom) interface{} {
 func (interpreter *Interpreter) evalSymbol(ex expr.Symbol) (interface{}, error) {
 	val, ok := interpreter.environment[ex.Name]
 	if !ok {
-		return nil, fmt.Errorf("Runtime error. Could not find symbol '%v'.", ex.Name)
+		return nil, fmt.Errorf("runtime error. Could not find symbol '%v'", ex.Name)
 	}
 	return val, nil
 }

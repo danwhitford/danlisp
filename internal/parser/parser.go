@@ -73,7 +73,7 @@ func (parser *Parser) consumeSeq() (expr.Seq, error) {
 		seq = append(seq, e)
 	}
 	if parser.current == parser.length {
-		return expr.Seq{}, fmt.Errorf("parse error. missing ')' to close sequence.")
+		return expr.Seq{}, fmt.Errorf("parse error. missing ')' to close sequence")
 	}
 	parser.consume() // Consume the RB
 	return expr.Seq{Exprs: seq}, nil
