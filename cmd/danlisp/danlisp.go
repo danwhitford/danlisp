@@ -37,7 +37,8 @@ func main() {
 			continue
 		}
 
-		tokens, err := lexer.GetTokens(line)
+		lex := lexer.NewLexer(line)
+		tokens, err := lex.GetTokens()
 		if err != nil {
 			fmt.Println(err.Error())
 			continue

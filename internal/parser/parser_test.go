@@ -21,21 +21,24 @@ func assertNumber(t *testing.T, expected, actual float64) {
 
 func TestNumber(t *testing.T) {
 	input := "123.7"
-	tokens, _ := lexer.GetTokens(input)
+	lex := lexer.NewLexer(input)
+	tokens, _ := lex.GetTokens()
 	expressions, _ := GetExpressions(tokens)
 	assertNumber(t, 123.7, expressions[0].(expr.Atom).Value.(float64))
 }
 
 func TestString(t *testing.T) {
 	input := "\"egghead\""
-	tokens, _ := lexer.GetTokens(input)
+	lex := lexer.NewLexer(input)
+	tokens, _ := lex.GetTokens()
 	expressions, _ := GetExpressions(tokens)
 	assertString(t, "egghead", expressions[0].(expr.Atom).Value.(string))
 }
 
 func TestSeq(t *testing.T) {
 	input := "(0 1 2 3 4 5)"
-	tokens, _ := lexer.GetTokens(input)
+	lex := lexer.NewLexer(input)
+	tokens, _ := lex.GetTokens()
 	expressions, _ := GetExpressions(tokens)
 	seq := expressions[0].(expr.Seq)
 	for i := 0; i < 6; i++ {
@@ -46,7 +49,8 @@ func TestSeq(t *testing.T) {
 
 func TestNestedSeq(t *testing.T) {
 	input := "(concat (0 1 2) (3 4 5))"
-	tokens, _ := lexer.GetTokens(input)
+	lex := lexer.NewLexer(input)
+	tokens, _ := lex.GetTokens()
 	expressions, _ := GetExpressions(tokens)
 	sym, ok := expressions[0].(expr.Seq).Exprs[0].(expr.Symbol)
 	if !ok {
@@ -69,14 +73,16 @@ func TestNestedSeq(t *testing.T) {
 
 func TestErrorWhenSeqNotClosed(t *testing.T) {
 	input := "(+ 1 2 3 4"
-	tokens, _ := lexer.GetTokens(input)
+	lex := lexer.NewLexer(input)
+	tokens, _ := lex.GetTokens()
 	_, err := GetExpressions(tokens)
 	assertString(t, "parse error. missing ')' to close sequence.", err.Error())
 }
 
 func TestDefinition(t *testing.T) {
 	input := "(def x 5)"
-	tokens, _ := lexer.GetTokens(input)
+	lex := lexer.NewLexer(input)
+	tokens, _ := lex.GetTokens()
 	exprs, _ := GetExpressions(tokens)
 	defe, ok := exprs[0].(expr.Def)
 	if !ok {
@@ -88,7 +94,8 @@ func TestDefinition(t *testing.T) {
 
 func TestIf(t *testing.T) {
 	input := `(if (= 2 2) "yes" "no")`
-	tokens, _ := lexer.GetTokens(input)
+	lex := lexer.NewLexer(input)
+	tokens, _ := lex.GetTokens()
 	exprs, _ := GetExpressions(tokens)
 	ife, ok := exprs[0].(expr.If)
 	if !ok {

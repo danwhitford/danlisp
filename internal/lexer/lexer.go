@@ -8,50 +8,56 @@ import (
 	"github.com/shaftoe44/danlisp/internal/token"
 )
 
-var length int
-var current int
-var source string
-var line int
+type Lexer struct {
+	length  int
+	current int
+	source  string
+	line    int
+}
 
-func GetTokens(input string) ([]token.Token, error) {
-	current = 0
-	length = len(input)
-	source = input
-	line = 1
+func NewLexer(input string) Lexer {
+	return Lexer{
+		current: 0,
+		length:  len(input),
+		source:  input,
+		line:    1,
+	}
+}
 
+func (lexer *Lexer) GetTokens() ([]token.Token, error) {
 	var tokens []token.Token
-	for current < length {
-		c := peek()
+	for lexer.current < lexer.length {
+		c := lexer.peek()
 		if c == "(" {
-			c = consume()
+			c = lexer.consume()
 			r := token.Token{TokenType: token.LB, Lexeme: c, Line: 1}
 			tokens = append(tokens, r)
 		} else if c == ")" {
-			c = consume()
+			c = lexer.consume()
 			r := token.Token{TokenType: token.RB, Lexeme: c, Line: 1}
 			tokens = append(tokens, r)
 		} else if isDigit(c) {
-			t, err := consumeNumber()
+			t, err := lexer.consumeNumber()
 			if err != nil {
 				return tokens, err
 			}
 			tokens = append(tokens, t)
 		} else if c == "\"" {
-			t, err := consumeString()
+			t, err := lexer.consumeString()
 			if err != nil {
 				return tokens, err
 			}
 			tokens = append(tokens, t)
 		} else if isWhitespace(c) {
-			current++
+			lexer.current++
 		} else {
-			lexeme := consumeLexeme()
+			lexeme := lexer.consumeLexeme()
 			if lexeme == "def" {
-				tokens = append(tokens, token.Token{TokenType: token.DEF, Lexeme: lexeme, Line: line})
+				tokens = append(tokens, token.Token{TokenType: token.DEF, Lexeme: lexeme, Line: lexer.line})
 			} else if lexeme == "if" {
-				tokens = append(tokens, token.Token{TokenType: token.IF, Lexeme: lexeme, Line: line})
+				tokens = append(tokens, token.Token{TokenType: token.IF, Lexeme: lexeme, Line: lexer.line})
 			} else {
-				tokens = append(tokens, token.Token{TokenType: token.KEYWORD, Lexeme: lexeme, Line: line})
+				tokens = append(tokens, token.Token{TokenType: token.KEYWORD, Lexeme: lexeme, Line: lexer.line})
 			}
 		}
 	}
@@ -59,13 +65,13 @@ func GetTokens(input string) ([]token.Token, error) {
 	return tokens, nil
 }
 
-func peek() string {
-	return source[current : current+1]
+func (lexer *Lexer) peek() string {
+	return lexer.source[lexer.current : lexer.current+1]
 }
 
-func consume() string {
-	s := source[current : current+1]
-	current++
+func (lexer *Lexer) consume() string {
+	s := lexer.source[lexer.current : lexer.current+1]
+	lexer.current++
 	return s
 }
 
@@ -89,11 +95,11 @@ func isWhitespace(c string) bool {
 	return false
 }
 
-func consumeLexeme() string {
+func (lexer *Lexer) consumeLexeme() string {
 	var b strings.Builder
 	var c string
-	for current < length && !endsToken(peek()) {
-		c = consume()
+	for lexer.current < lexer.length && !endsToken(lexer.peek()) {
+		c = lexer.consume()
 		b.WriteString(c)
 	}
 	return b.String()
@@ -109,16 +115,16 @@ func consumeLexeme() string {
 // 	return token.Token{TokenType: token.KEYWORD, Lexeme: b.String(), Line: 1}
 // }
 
-func consumeNumber() (token.Token, error) {
+func (lexer *Lexer) consumeNumber() (token.Token, error) {
 	var b strings.Builder
 	var c string
-	for current < length && !endsToken(peek()) {
-		c = consume()
+	for lexer.current < lexer.length && !endsToken(lexer.peek()) {
+		c = lexer.consume()
 		b.WriteString(c)
 	}
 	val, ok := strconv.ParseFloat(b.String(), 64)
 	if ok != nil {
-		return token.Token{}, fmt.Errorf("error while lexing on line %d. '%v' is not a number", line, b.String())
+		return token.Token{}, fmt.Errorf("error while lexing on line %d. '%v' is not a number", lexer.line, b.String())
 	}
 	return token.Token{TokenType: token.LITERAL, Lexeme: b.String(), Value: val, Line: 1}, nil
 }
@@ -133,21 +139,21 @@ func isDigit(c string) bool {
 	return false
 }
 
-func consumeString() (token.Token, error) {
+func (lexer *Lexer) consumeString() (token.Token, error) {
 	var b strings.Builder
 	var c string
-	b.WriteString(consume()) // Consume the first quote
-	for current < length && peek() != "\"" {
-		if peek() == "\n" {
-			return token.Token{}, fmt.Errorf("error while lexing on line %d. reached end of line in string '%v'", line, b.String())
+	b.WriteString(lexer.consume()) // Consume the first quote
+	for lexer.current < lexer.length && lexer.peek() != "\"" {
+		if lexer.peek() == "\n" {
+			return token.Token{}, fmt.Errorf("error while lexing on line %d. reached end of line in string '%v'", lexer.line, b.String())
 		}
-		c = consume()
+		c = lexer.consume()
 		b.WriteString(c)
 	}
-	if current == length {
-		return token.Token{}, fmt.Errorf("error while lexing on line %d. reached end of input in string '%v'", line, b.String())
+	if lexer.current == lexer.length {
+		return token.Token{}, fmt.Errorf("error while lexing on line %d. reached end of input in string '%v'", lexer.line, b.String())
 	}
-	b.WriteString(consume()) // Consume the final quote
+	b.WriteString(lexer.consume()) // Consume the final quote
 	lexeme := b.String()
 	val, _ := strconv.Unquote(lexeme)
 

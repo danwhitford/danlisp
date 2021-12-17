@@ -26,33 +26,38 @@ func assertNumber(t *testing.T, expected, actual float64) {
 
 func TestSingleLeftBrack(t *testing.T) {
 	input := "("
-	tokens, _ := GetTokens(input)
+	lex := NewLexer(input)
+	tokens, _ := lex.GetTokens()
 	assertType(t, token.LB, tokens[0].TokenType)
 }
 
 func TestSingleRightBrack(t *testing.T) {
 	input := ")"
-	tokens, _ := GetTokens(input)
+	lex := NewLexer(input)
+	tokens, _ := lex.GetTokens()
 	assertType(t, token.RB, tokens[0].TokenType)
 }
 
 func TestBracketPair(t *testing.T) {
 	input := "()"
-	tokens, _ := GetTokens(input)
+	lex := NewLexer(input)
+	tokens, _ := lex.GetTokens()
 	assertType(t, token.LB, tokens[0].TokenType)
 	assertType(t, token.RB, tokens[1].TokenType)
 }
 
 func TestKeyword(t *testing.T) {
 	input := "let"
-	tokens, _ := GetTokens(input)
+	lex := NewLexer(input)
+	tokens, _ := lex.GetTokens()
 	assertType(t, token.KEYWORD, tokens[0].TokenType)
 	assertString(t, "let", tokens[0].Lexeme)
 }
 
 func TestNumber(t *testing.T) {
 	input := "123.7"
-	tokens, _ := GetTokens(input)
+	lex := NewLexer(input)
+	tokens, _ := lex.GetTokens()
 	assertType(t, token.LITERAL, tokens[0].TokenType)
 	assertString(t, "123.7", tokens[0].Lexeme)
 	assertNumber(t, 123.7, tokens[0].Value.(float64))
@@ -60,13 +65,15 @@ func TestNumber(t *testing.T) {
 
 func TestErrorInNumber(t *testing.T) {
 	input := "123notanumber"
-	_, err := GetTokens(input)
+	lex := NewLexer(input)
+	_, err := lex.GetTokens()
 	assertString(t, err.Error(), "error while lexing on line 1. '123notanumber' is not a number")
 }
 
 func TestString(t *testing.T) {
 	input := "\"i am the fly\""
-	tokens, _ := GetTokens(input)
+	lex := NewLexer(input)
+	tokens, _ := lex.GetTokens()
 	assertType(t, token.LITERAL, tokens[0].TokenType)
 	assertString(t, "\"i am the fly\"", tokens[0].Lexeme)
 	assertString(t, "i am the fly", tokens[0].Value.(string))
@@ -74,19 +81,22 @@ func TestString(t *testing.T) {
 
 func TestEOLInString(t *testing.T) {
 	input := "\"i am the fly\nfly in the fly in the\""
-	_, err := GetTokens(input)
+	lex := NewLexer(input)
+	_, err := lex.GetTokens()
 	assertString(t, err.Error(), "error while lexing on line 1. reached end of line in string '\"i am the fly'")
 }
 
 func TestEOFInString(t *testing.T) {
 	input := "\"i am the fly"
-	_, err := GetTokens(input)
+	lex := NewLexer(input)
+	_, err := lex.GetTokens()
 	assertString(t, err.Error(), "error while lexing on line 1. reached end of input in string '\"i am the fly'")
 }
 
 func TestSeq(t *testing.T) {
 	input := "(1 2 3)"
-	tokens, _ := GetTokens(input)
+	lex := NewLexer(input)
+	tokens, _ := lex.GetTokens()
 	assertType(t, token.LB, tokens[0].TokenType)
 	assertType(t, token.LITERAL, tokens[1].TokenType)
 	assertType(t, token.LITERAL, tokens[2].TokenType)
@@ -96,7 +106,8 @@ func TestSeq(t *testing.T) {
 
 func TestDefinition(t *testing.T) {
 	input := "(def x 5)"
-	tokens, _ := GetTokens(input)
+	lex := NewLexer(input)
+	tokens, _ := lex.GetTokens()
 	assertType(t, token.LB, tokens[0].TokenType)
 	assertType(t, token.DEF, tokens[1].TokenType)
 	assertType(t, token.KEYWORD, tokens[2].TokenType)
@@ -106,7 +117,8 @@ func TestDefinition(t *testing.T) {
 
 func TestIf(t *testing.T) {
 	input := "(if (= 5 x))"
-	tokens, _ := GetTokens(input)
+	lex := NewLexer(input)
+	tokens, _ := lex.GetTokens()
 	assertType(t, token.LB, tokens[0].TokenType)
 	assertType(t, token.IF, tokens[1].TokenType)
 }
