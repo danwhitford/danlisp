@@ -6,20 +6,19 @@ import (
 	"github.com/shaftoe44/danlisp/internal/expr"
 )
 
-var environment map[string]interface{}
-
-func Interpret(exprs []expr.Expr) (interface{}, error) {
-	environment = NewEnvironment()
-	return InterpretPersistant(exprs, environment)
+type Interpreter struct {
+	environment map[string]interface{}
 }
 
-func InterpretPersistant(exprs []expr.Expr, env map[string]interface{}) (interface{}, error) {
-	environment = env
+func NewInterpreter() Interpreter{
+	return Interpreter{NewEnvironment()}
+}
 
+func (interpreter *Interpreter) Interpret(exprs []expr.Expr) (interface{}, error) {	
 	var retval interface{}
 	var err error
 	for _, ex := range exprs {
-		retval, err = eval(ex)
+		retval, err = interpreter.eval(ex)
 		if err != nil {
 			return nil, err
 		}
@@ -27,19 +26,19 @@ func InterpretPersistant(exprs []expr.Expr, env map[string]interface{}) (interfa
 	return retval, nil
 }
 
-func eval(ex expr.Expr) (interface{}, error) {
+func (interpreter *Interpreter) eval(ex expr.Expr) (interface{}, error) {
 
 	switch v := ex.(type) {
 	case expr.Atom:
 		return evalAtom(v), nil
 	case expr.Seq:
-		return evalSeq(v)
+		return interpreter.evalSeq(v)
 	case expr.Symbol:
-		return evalSymbol(v)
+		return interpreter.evalSymbol(v)
 	case expr.Def:
-		return evalDef(v)
+		return interpreter.evalDef(v)
 	case expr.If:
-		return evalIf(v)
+		return interpreter.evalIf(v)
 	}
 
 	panic("Don't know how to eval this thing")
@@ -49,43 +48,43 @@ func evalAtom(ex expr.Atom) interface{} {
 	return ex.Value
 }
 
-func evalSymbol(ex expr.Symbol) (interface{}, error) {
-	val, ok := environment[ex.Name]
+func (interpreter *Interpreter) evalSymbol(ex expr.Symbol) (interface{}, error) {
+	val, ok := interpreter.environment[ex.Name]
 	if !ok {
 		return nil, fmt.Errorf("Runtime error. Could not find symbol '%v'.", ex.Name)
 	}
 	return val, nil
 }
 
-func evalSeq(ex expr.Seq) (interface{}, error) {
-	symbol, err := eval(ex.Exprs[0])
+func (interpreter *Interpreter) evalSeq(ex expr.Seq) (interface{}, error) {
+	symbol, err := interpreter.eval(ex.Exprs[0])
 	if err != nil {
 		return symbol, err
 	}
 	args := []interface{}{}
 	for _, argex := range ex.Exprs[1:] {
-		arg, _ := eval(argex)
+		arg, _ := interpreter.eval(argex)
 		args = append(args, arg)
 	}
 	applyer := symbol.(func(argv []interface{}) interface{})
 	return applyer(args), nil
 }
 
-func evalDef(ex expr.Def) (interface{}, error) {
-	val, err := eval(ex.Value)
-	environment[ex.Var.Name] = val
+func (interpreter *Interpreter)  evalDef(ex expr.Def) (interface{}, error) {
+	val, err := interpreter.eval(ex.Value)
+	interpreter.environment[ex.Var.Name] = val
 	return val, err
 }
 
-func evalIf(iff expr.If) (interface{}, error) {
-	cond, _ := eval(iff.Cond)
+func (interpreter *Interpreter) evalIf(iff expr.If) (interface{}, error) {
+	cond, _ := interpreter.eval(iff.Cond)
 	var expr expr.Expr
 	if isTruthy(cond) {
 		expr = iff.TrueBranch
 	} else {
 		expr = iff.FalseBranch
 	}
-	return eval(expr)
+	return interpreter.eval(expr)
 }
 
 func NewEnvironment() map[string]interface{} {

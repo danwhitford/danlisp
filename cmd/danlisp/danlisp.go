@@ -22,7 +22,7 @@ ______            _     _
 
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
-	env := interpreter.NewEnvironment()
+	intr := interpreter.NewInterpreter()
 	var lxr lexer.Lexer
 	var psr parser.Parser
 
@@ -51,7 +51,7 @@ func main() {
 			fmt.Println(err.Error())
 			continue
 		}
-		res, err := interpreter.InterpretPersistant(exprs, env)
+		res, err := intr.Interpret(exprs)
 		if err != nil {
 			fmt.Println(err.Error())
 			continue

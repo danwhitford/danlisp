@@ -36,124 +36,136 @@ func getExpressions(input string) []expr.Expr {
 
 func TestJustNumber(t *testing.T) {
 	exprs := getExpressions("101")
-	ret, _ := Interpret(exprs)
+	intr := NewInterpreter()
+	ret, _ := intr.Interpret(exprs)
 	assertNumber(t, 101, ret.(float64))
 }
 
 func TestJustString(t *testing.T) {
 	exprs := getExpressions("\"testing testing\"")
-	ret, _ := Interpret(exprs)
+	intr := NewInterpreter()
+	ret, _ := intr.Interpret(exprs)
 	assertString(t, "testing testing", ret.(string))
 }
 
 func TestAddTwo(t *testing.T) {
 	exprs := getExpressions("(+ 2 7)")
-	ret, _ := Interpret(exprs)
+	intr := NewInterpreter()
+	ret, _ := intr.Interpret(exprs)
 	assertNumber(t, 9, ret.(float64))
 }
 
 func TestSubtract(t *testing.T) {
 	exprs := getExpressions("(- 2 7)")
-	ret, _ := Interpret(exprs)
+	intr := NewInterpreter()
+	ret, _ := intr.Interpret(exprs)
 	assertNumber(t, -5, ret.(float64))
 }
 
 func TestErrorFuncNotFound(t *testing.T) {
 	exprs := getExpressions("(nonsuch 2 7)")
-	_, err := Interpret(exprs)
+	intr := NewInterpreter()
+	_, err := intr.Interpret(exprs)
 	assertString(t, "Runtime error. Could not find symbol 'nonsuch'.", err.Error())
 }
 
 func TestMoreBasicOperators(t *testing.T) {
 	exprs := getExpressions("(* 2 7)")
-	ret, _ := Interpret(exprs)
+	intr := NewInterpreter()
+	ret, _ := intr.Interpret(exprs)
 	assertNumber(t, 14, ret.(float64))
 
 	exprs = getExpressions("(/ 10 4)")
-	ret, _ = Interpret(exprs)
+	ret, _ = intr.Interpret(exprs)
 	assertNumber(t, 2.5, ret.(float64))
 
 	exprs = getExpressions("(mod 10 4)")
-	ret, _ = Interpret(exprs)
+	ret, _ = intr.Interpret(exprs)
 	assertNumber(t, 2, ret.(float64))
 }
 
 func TestBitwiseOps(t *testing.T) {
 	exprs := getExpressions("(& 255 101)")
-	ret, _ := Interpret(exprs)
+	intr := NewInterpreter()
+	ret, _ := intr.Interpret(exprs)
 	assertNumber(t, 101, ret.(float64))
 
 	exprs = getExpressions("(| 255 72)")
-	ret, _ = Interpret(exprs)
+	ret, _ = intr.Interpret(exprs)
 	assertNumber(t, 255, ret.(float64))
 
 	exprs = getExpressions("(^ 0 72)")
-	ret, _ = Interpret(exprs)
+	ret, _ = intr.Interpret(exprs)
 	assertNumber(t, 72, ret.(float64))
 
 	exprs = getExpressions("(&^ 255 72)")
-	ret, _ = Interpret(exprs)
+	ret, _ = intr.Interpret(exprs)
 	assertNumber(t, 183, ret.(float64))
 }
 
 func TestShifts(t *testing.T) {
 	exprs := getExpressions("(>> 255 2)")
-	ret, _ := Interpret(exprs)
+	intr := NewInterpreter()
+	ret, _ := intr.Interpret(exprs)
 	assertNumber(t, 63, ret.(float64))
 
 	exprs = getExpressions("(<< 255 2)")
-	ret, _ = Interpret(exprs)
+	ret, _ = intr.Interpret(exprs)
 	assertNumber(t, 1020, ret.(float64))
 }
 
 func TestDefinition(t *testing.T) {
 	exprs := getExpressions("(def foo 10) (* foo 5)")
-	ret, _ := Interpret(exprs)
+	intr := NewInterpreter()
+	ret, _ := intr.Interpret(exprs)
 	assertNumber(t, 50, ret.(float64))
 }
 
 func TestEquals(t *testing.T) {
 	exprs := getExpressions("(def foo 10) (= foo 10)")
-	ret, _ := Interpret(exprs)
+	intr := NewInterpreter()
+	ret, _ := intr.Interpret(exprs)
 	assert(t, ret.(bool))
 
 	exprs = getExpressions("(def foo 10) (= foo 5)")
-	ret, _ = Interpret(exprs)
+	ret, _ = intr.Interpret(exprs)
 	assert(t, !ret.(bool))
 
 	exprs = getExpressions("(def bar \"dan\") (= bar \"dan\")")
-	ret, _ = Interpret(exprs)
+	ret, _ = intr.Interpret(exprs)
 	assert(t, ret.(bool))
 
 	exprs = getExpressions("(def bar \"dan\") (= foo \"egg\")")
-	ret, _ = Interpret(exprs)
+	ret, _ = intr.Interpret(exprs)
 	assert(t, !ret.(bool))
 }
 
 func TestAndOr(t *testing.T) {
 	exprs := getExpressions("(and (= 2 2) (= 5 5))")
-	ret, _ := Interpret(exprs)
+	intr := NewInterpreter()
+	ret, _ := intr.Interpret(exprs)
 	assert(t, ret.(bool))
 
 	exprs = getExpressions("(and (= 2 2) (= 1 5))")
-	ret, _ = Interpret(exprs)
+	ret, _ = intr.Interpret(exprs)
 	assert(t, !ret.(bool))
 
 	exprs = getExpressions("(or (= 2 2) (= 1 5))")
-	ret, _ = Interpret(exprs)
+	ret, _ = intr.Interpret(exprs)
 	assert(t, ret.(bool))
 
 	exprs = getExpressions("(or (= 2 5) (= 1 5))")
-	ret, _ = Interpret(exprs)
+	ret, _ = intr.Interpret(exprs)
 	assert(t, !ret.(bool))
 }
 
 func TestIfExpr(t *testing.T) {
 	exprs := getExpressions(`(if (= 2 2) "yes" "no")`)
-	ret, _ := Interpret(exprs)
+	intr := NewInterpreter()
+	ret, _ := intr.Interpret(exprs)
 	assertString(t, "yes", ret.(string))
 
 	exprs = getExpressions(`(if (= (+2 2) 5) "yes" "no")`)
-	ret, _ = Interpret(exprs)
+	ret, _ = intr.Interpret(exprs)
 	assertString(t, "no", ret.(string))
 }
