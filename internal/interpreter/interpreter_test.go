@@ -66,7 +66,7 @@ func TestErrorFuncNotFound(t *testing.T) {
 	exprs := getExpressions("(nonsuch 2 7)")
 	intr := NewInterpreter()
 	_, err := intr.Interpret(exprs)
-	assertString(t, "Runtime error. Could not find symbol 'nonsuch'.", err.Error())
+	assertString(t, "runtime error. Could not find symbol 'nonsuch'", err.Error())
 }
 
 func TestMoreBasicOperators(t *testing.T) {

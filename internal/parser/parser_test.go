@@ -81,7 +81,7 @@ func TestErrorWhenSeqNotClosed(t *testing.T) {
 	tokens, _ := lex.GetTokens()
 	parser := NewParser(tokens)
 	_, err := parser.GetExpressions(tokens)
-	assertString(t, "parse error. missing ')' to close sequence.", err.Error())
+	assertString(t, "parse error. missing ')' to close sequence", err.Error())
 }
 
 func TestDefinition(t *testing.T) {
