@@ -10,11 +10,11 @@ type Interpreter struct {
 	environment map[string]interface{}
 }
 
-func NewInterpreter() Interpreter{
+func NewInterpreter() Interpreter {
 	return Interpreter{NewEnvironment()}
 }
 
-func (interpreter *Interpreter) Interpret(exprs []expr.Expr) (interface{}, error) {	
+func (interpreter *Interpreter) Interpret(exprs []expr.Expr) (interface{}, error) {
 	var retval interface{}
 	var err error
 	for _, ex := range exprs {
@@ -70,7 +70,7 @@ func (interpreter *Interpreter) evalSeq(ex expr.Seq) (interface{}, error) {
 	return applyer(args), nil
 }
 
-func (interpreter *Interpreter)  evalDef(ex expr.Def) (interface{}, error) {
+func (interpreter *Interpreter) evalDef(ex expr.Def) (interface{}, error) {
 	val, err := interpreter.eval(ex.Value)
 	interpreter.environment[ex.Var.Name] = val
 	return val, err

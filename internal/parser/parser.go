@@ -9,15 +9,15 @@ import (
 
 type Parser struct {
 	current int
-	length int
-	source []token.Token
+	length  int
+	source  []token.Token
 }
 
 func NewParser(tokens []token.Token) Parser {
 	return Parser{
 		current: 0,
-		length: len(tokens),
-		source: tokens,
+		length:  len(tokens),
+		source:  tokens,
 	}
 }
 
@@ -42,6 +42,8 @@ func (parser *Parser) getExpression() (expr.Expr, error) {
 			return parser.consumeDef()
 		} else if parser.next().TokenType == token.IF {
 			return parser.consumeIf()
+		} else if parser.next().TokenType == token.WHILE {
+			return parser.consumeWhile()
 		} else {
 			return parser.consumeSeq()
 		}

@@ -9,6 +9,7 @@ const (
 	LITERAL
 	DEF
 	IF
+	WHILE
 )
 
 type Token struct {

@@ -24,3 +24,8 @@ type If struct {
 	TrueBranch  Expr
 	FalseBranch Expr
 }
+
+type When struct {
+	Cond Expr
+	Body []Expr
+}

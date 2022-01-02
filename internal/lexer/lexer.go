@@ -56,6 +56,8 @@ func (lexer *Lexer) GetTokens() ([]token.Token, error) {
 				tokens = append(tokens, token.Token{TokenType: token.DEF, Lexeme: lexeme, Line: lexer.line})
 			} else if lexeme == "if" {
 				tokens = append(tokens, token.Token{TokenType: token.IF, Lexeme: lexeme, Line: lexer.line})
+			} else if lexeme == "while" {
+				tokens = append(tokens, token.Token{TokenType: token.WHILE, Lexeme: lexeme, Line: lexer.line})
 			} else {
 				tokens = append(tokens, token.Token{TokenType: token.KEYWORD, Lexeme: lexeme, Line: lexer.line})
 			}

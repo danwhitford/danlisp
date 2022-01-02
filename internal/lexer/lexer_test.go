@@ -122,3 +122,11 @@ func TestIf(t *testing.T) {
 	assertType(t, token.LB, tokens[0].TokenType)
 	assertType(t, token.IF, tokens[1].TokenType)
 }
+
+func TestWhile(t *testing.T) {
+	input := "(while (> x 0) (def x (- x 1)))"
+	lex := NewLexer(input)
+	tokens, _ := lex.GetTokens()
+	assertType(t, token.LB, tokens[0].TokenType)
+	assertType(t, token.WHILE, tokens[1].TokenType)
+}
