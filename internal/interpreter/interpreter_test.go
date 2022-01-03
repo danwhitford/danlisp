@@ -165,7 +165,7 @@ func TestIfExpr(t *testing.T) {
 	ret, _ := intr.Interpret(exprs)
 	assertString(t, "yes", ret.(string))
 
-	exprs = getExpressions(`(if (= (+2 2) 5) "yes" "no")`)
+	exprs = getExpressions(`(if (= (+ 2 2) 5) "yes" "no")`)
 	ret, _ = intr.Interpret(exprs)
 	assertString(t, "no", ret.(string))
 }

@@ -49,7 +49,10 @@ func (interpreter *Interpreter) eval(ex expr.Expr) (interface{}, error) {
 
 func (interpreter *Interpreter) evalWhile(ex expr.While) (interface{}, error) {
 	var retval interface{}
-	for c, _ := interpreter.eval(ex.Cond); isTruthy(c); c, _ = interpreter.eval(ex.Cond) {
+	for c, err := interpreter.eval(ex.Cond); isTruthy(c); c, err = interpreter.eval(ex.Cond) {
+		if err != nil {
+			return nil, err
+		}
 		for _, line := range ex.Body {
 			val, er := interpreter.eval(line)
 			if er != nil {
@@ -80,7 +83,10 @@ func (interpreter *Interpreter) evalSeq(ex expr.Seq) (interface{}, error) {
 	}
 	args := []interface{}{}
 	for _, argex := range ex.Exprs[1:] {
-		arg, _ := interpreter.eval(argex)
+		arg, err := interpreter.eval(argex)
+		if err != nil {
+			return nil, err
+		}
 		args = append(args, arg)
 	}
 	applyer := symbol.(func(argv []interface{}) interface{})
