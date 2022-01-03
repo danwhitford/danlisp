@@ -2,8 +2,8 @@ package interpreter
 
 import (
 	"fmt"
-	"strings"
 	"github.com/shaftoe44/danlisp/internal/expr"
+	"strings"
 )
 
 type Interpreter struct {
@@ -132,7 +132,7 @@ func NewEnvironment() map[string]interface{} {
 	env["lt"] = func(argv []interface{}) interface{} { return argv[0].(float64) < argv[1].(float64) }
 
 	// Utility
-	env["prn"] = func(argv []interface{}) interface{} { 
+	env["prn"] = func(argv []interface{}) interface{} {
 		strs := []string{}
 		for _, v := range argv {
 			strs = append(strs, fmt.Sprintf("%v", v))

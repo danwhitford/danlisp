@@ -57,13 +57,13 @@ func (parser *Parser) getExpression() (expr.Expr, error) {
 func (parser *Parser) consumeWhile() (expr.While, error) {
 	parser.consume() // Consume the LB
 	parser.consume() // Consume the while
-	
+
 	cond, cerr := parser.getExpression()
 	if cerr != nil {
 		return expr.While{}, cerr
 	}
-	
-	body := []expr.Expr{}	
+
+	body := []expr.Expr{}
 	for parser.current < parser.length && parser.peek().TokenType != token.RB {
 		e, err := parser.getExpression()
 		if err != nil {
