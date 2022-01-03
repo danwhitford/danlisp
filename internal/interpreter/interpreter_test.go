@@ -169,3 +169,10 @@ func TestIfExpr(t *testing.T) {
 	ret, _ = intr.Interpret(exprs)
 	assertString(t, "no", ret.(string))
 }
+
+func TestWhileExpr(t * testing.T) {
+	exprs := getExpressions(`(def x 5) (def total 0) (while (gt x 0) (def total (+ total x)) (def x (- x 1))) total`)
+	intr := NewInterpreter()
+	ret, _ := intr.Interpret(exprs)
+	assertNumber(t, 15, ret.(float64))
+}

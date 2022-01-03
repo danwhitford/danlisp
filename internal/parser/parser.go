@@ -54,6 +54,28 @@ func (parser *Parser) getExpression() (expr.Expr, error) {
 	}
 }
 
+func (parser *Parser) consumeWhile() (expr.While, error) {
+	parser.consume() // Consume the LB
+	parser.consume() // Consume the while
+	
+	cond, cerr := parser.getExpression()
+	if cerr != nil {
+		return expr.While{}, cerr
+	}
+	
+	body := []expr.Expr{}	
+	for parser.current < parser.length && parser.peek().TokenType != token.RB {
+		e, err := parser.getExpression()
+		if err != nil {
+			return expr.While{Cond: cond, Body: body}, err
+		}
+		body = append(body, e)
+	}
+
+	parser.consume() // Consume the RB
+	return expr.While{Cond: cond, Body: body}, nil
+}
+
 func (parser *Parser) consumeKeyword() (expr.Symbol, error) {
 	return expr.Symbol{Name: parser.consume().Lexeme}, nil
 }

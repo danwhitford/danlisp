@@ -125,17 +125,11 @@ func TestWhile(t *testing.T) {
 	tokens, _ := lex.GetTokens()
 	parser := NewParser(tokens)
 	exprs, _ := parser.GetExpressions(tokens)
-	ife, ok := exprs[0].(expr.When)
+	ife, ok := exprs[0].(expr.While)
 	if !ok {
-		t.Fatalf("Conversion to When expression failed")
+		t.Fatalf("Conversion to While expression failed")
 	}
 	if ife.Cond.(expr.Seq).Exprs[0].(expr.Symbol).Name != ">" {
 		t.Fatal("Condition wasn't right")
 	}
-	// if ife.TrueBranch.(expr.Atom).Value != "yes" {
-	// 	t.Fatal("True branch wasn't right")
-	// }
-	// if ife.FalseBranch.(expr.Atom).Value != "no" {
-	// 	t.Fatal("False branch wasn't right")
-	// }
 }

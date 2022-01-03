@@ -39,9 +39,26 @@ func (interpreter *Interpreter) eval(ex expr.Expr) (interface{}, error) {
 		return interpreter.evalDef(v)
 	case expr.If:
 		return interpreter.evalIf(v)
+	case expr.While:
+		return interpreter.evalWhile(v)
 	}
 
+	fmt.Printf("%T %#v\n", ex, ex)
 	panic("Don't know how to eval this thing")
+}
+
+func (interpreter *Interpreter) evalWhile(ex expr.While) (interface{}, error) {
+	var retval interface{}
+	for c, _ := interpreter.eval(ex.Cond); isTruthy(c); c, _ = interpreter.eval(ex.Cond) {
+		for _, line := range ex.Body {
+			val, er := interpreter.eval(line)
+			if er != nil {
+				return nil, er
+			}
+			retval = val
+		}
+	}
+	return retval, nil
 }
 
 func evalAtom(ex expr.Atom) interface{} {
@@ -109,6 +126,10 @@ func NewEnvironment() map[string]interface{} {
 	env["="] = func(argv []interface{}) interface{} { return argv[0] == argv[1] }
 	env["and"] = func(argv []interface{}) interface{} { return isTruthy(argv[0]) && isTruthy(argv[1]) }
 	env["or"] = func(argv []interface{}) interface{} { return isTruthy(argv[0]) || isTruthy(argv[1]) }
+
+	// Compparison
+	env["gt"] = func(argv []interface{}) interface{} { return argv[0].(float64) > argv[1].(float64) }
+	env["lt"] = func(argv []interface{}) interface{} { return argv[0].(float64) < argv[1].(float64) }
 
 	return env
 }

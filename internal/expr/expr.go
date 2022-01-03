@@ -25,7 +25,7 @@ type If struct {
 	FalseBranch Expr
 }
 
-type When struct {
+type While struct {
 	Cond Expr
 	Body []Expr
 }
