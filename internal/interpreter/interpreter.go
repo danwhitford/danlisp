@@ -2,7 +2,7 @@ package interpreter
 
 import (
 	"fmt"
-
+	"strings"
 	"github.com/shaftoe44/danlisp/internal/expr"
 )
 
@@ -130,6 +130,16 @@ func NewEnvironment() map[string]interface{} {
 	// Compparison
 	env["gt"] = func(argv []interface{}) interface{} { return argv[0].(float64) > argv[1].(float64) }
 	env["lt"] = func(argv []interface{}) interface{} { return argv[0].(float64) < argv[1].(float64) }
+
+	// Utility
+	env["prn"] = func(argv []interface{}) interface{} { 
+		strs := []string{}
+		for _, v := range argv {
+			strs = append(strs, fmt.Sprintf("%v", v))
+		}
+		p, _ := fmt.Println(strings.Join(strs, " "))
+		return p
+	}
 
 	return env
 }
