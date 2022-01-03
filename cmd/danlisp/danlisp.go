@@ -46,7 +46,7 @@ func main() {
 			continue
 		}
 		psr = parser.NewParser(tokens)
-		exprs, _ := psr.GetExpressions(tokens)
+		exprs, err := psr.GetExpressions(tokens)
 		if err != nil {
 			fmt.Println(err.Error())
 			continue

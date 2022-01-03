@@ -94,7 +94,10 @@ func (interpreter *Interpreter) evalDef(ex expr.Def) (interface{}, error) {
 }
 
 func (interpreter *Interpreter) evalIf(iff expr.If) (interface{}, error) {
-	cond, _ := interpreter.eval(iff.Cond)
+	cond, err := interpreter.eval(iff.Cond)
+	if err != nil {
+		return nil, err
+	}
 	var expr expr.Expr
 	if isTruthy(cond) {
 		expr = iff.TrueBranch

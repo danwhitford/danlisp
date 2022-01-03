@@ -176,3 +176,13 @@ func TestWhileExpr(t *testing.T) {
 	ret, _ := intr.Interpret(exprs)
 	assertNumber(t, 15, ret.(float64))
 }
+
+func TestNestedError(t *testing.T) {
+	exprs := getExpressions(`(if (foo 5) "y" "n"))`)
+	intr := NewInterpreter()
+	_, err := intr.Interpret(exprs)
+	if err == nil {
+		t.Fatal("Expecting error")
+	}
+	assertString(t, "runtime error. Could not find symbol 'foo'", err.Error())
+}
