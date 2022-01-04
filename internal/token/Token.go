@@ -7,7 +7,7 @@ const (
 	RB
 	KEYWORD
 	LITERAL
-	DEF
+	SET
 	IF
 	WHILE
 )

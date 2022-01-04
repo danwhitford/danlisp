@@ -35,8 +35,8 @@ func (interpreter *Interpreter) eval(ex expr.Expr) (interface{}, error) {
 		return interpreter.evalSeq(v)
 	case expr.Symbol:
 		return interpreter.evalSymbol(v)
-	case expr.Def:
-		return interpreter.evalDef(v)
+	case expr.Set:
+		return interpreter.evalSet(v)
 	case expr.If:
 		return interpreter.evalIf(v)
 	case expr.While:
@@ -93,7 +93,7 @@ func (interpreter *Interpreter) evalSeq(ex expr.Seq) (interface{}, error) {
 	return applyer(args), nil
 }
 
-func (interpreter *Interpreter) evalDef(ex expr.Def) (interface{}, error) {
+func (interpreter *Interpreter) evalSet(ex expr.Set) (interface{}, error) {
 	val, err := interpreter.eval(ex.Value)
 	interpreter.environment[ex.Var.Name] = val
 	return val, err

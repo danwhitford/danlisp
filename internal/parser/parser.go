@@ -38,8 +38,8 @@ func (parser *Parser) GetExpressions(tokens []token.Token) ([]expr.Expr, error) 
 func (parser *Parser) getExpression() (expr.Expr, error) {
 	switch parser.peek().TokenType {
 	case token.LB:
-		if parser.next().TokenType == token.DEF {
-			return parser.consumeDef()
+		if parser.next().TokenType == token.SET {
+			return parser.consumeSet()
 		} else if parser.next().TokenType == token.IF {
 			return parser.consumeIf()
 		} else if parser.next().TokenType == token.WHILE {
@@ -103,17 +103,17 @@ func (parser *Parser) consumeSeq() (expr.Seq, error) {
 	return expr.Seq{Exprs: seq}, nil
 }
 
-func (parser *Parser) consumeDef() (expr.Def, error) {
+func (parser *Parser) consumeSet() (expr.Set, error) {
 	parser.consume() // Consume the LB
-	parser.consume() // Consume the def
+	parser.consume() // Consume the set
 	va := parser.consume()
 	if va.TokenType != token.KEYWORD {
-		return expr.Def{}, fmt.Errorf("parser error. trying to assign to '%v'", va.Lexeme)
+		return expr.Set{}, fmt.Errorf("parser error. trying to assign to '%v'", va.Lexeme)
 	}
 	sy := expr.Symbol{Name: va.Lexeme}
 	val, _ := parser.getExpression()
 	parser.consume() // Consume the RB
-	return expr.Def{Var: sy, Value: val}, nil
+	return expr.Set{Var: sy, Value: val}, nil
 }
 
 func (parser *Parser) consumeIf() (expr.If, error) {

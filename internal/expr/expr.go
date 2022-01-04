@@ -14,7 +14,7 @@ type Symbol struct {
 	Name string
 }
 
-type Def struct {
+type Set struct {
 	Var   Symbol
 	Value Expr
 }

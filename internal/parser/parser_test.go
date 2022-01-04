@@ -85,14 +85,14 @@ func TestErrorWhenSeqNotClosed(t *testing.T) {
 }
 
 func TestDefinition(t *testing.T) {
-	input := "(def x 5)"
+	input := "(set x 5)"
 	lex := lexer.NewLexer(input)
 	tokens, _ := lex.GetTokens()
 	parser := NewParser(tokens)
 	exprs, _ := parser.GetExpressions(tokens)
-	defe, ok := exprs[0].(expr.Def)
+	defe, ok := exprs[0].(expr.Set)
 	if !ok {
-		t.Fatalf("Conversion to Def expression failed")
+		t.Fatalf("Conversion to Set expression failed")
 	}
 	assertString(t, defe.Var.Name, "x")
 	assertNumber(t, 5, defe.Value.(expr.Atom).Value.(float64))
@@ -120,7 +120,7 @@ func TestIf(t *testing.T) {
 }
 
 func TestWhile(t *testing.T) {
-	input := `(while (> count 0) (def count (- count 1)))`
+	input := `(while (> count 0) (set count (- count 1)))`
 	lex := lexer.NewLexer(input)
 	tokens, _ := lex.GetTokens()
 	parser := NewParser(tokens)

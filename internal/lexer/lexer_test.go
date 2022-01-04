@@ -105,11 +105,11 @@ func TestSeq(t *testing.T) {
 }
 
 func TestDefinition(t *testing.T) {
-	input := "(def x 5)"
+	input := "(set x 5)"
 	lex := NewLexer(input)
 	tokens, _ := lex.GetTokens()
 	assertType(t, token.LB, tokens[0].TokenType)
-	assertType(t, token.DEF, tokens[1].TokenType)
+	assertType(t, token.SET, tokens[1].TokenType)
 	assertType(t, token.KEYWORD, tokens[2].TokenType)
 	assertType(t, token.LITERAL, tokens[3].TokenType)
 	assertType(t, token.RB, tokens[4].TokenType)
@@ -124,7 +124,7 @@ func TestIf(t *testing.T) {
 }
 
 func TestWhile(t *testing.T) {
-	input := "(while (> x 0) (def x (- x 1)))"
+	input := "(while (> x 0) (set x (- x 1)))"
 	lex := NewLexer(input)
 	tokens, _ := lex.GetTokens()
 	assertType(t, token.LB, tokens[0].TokenType)

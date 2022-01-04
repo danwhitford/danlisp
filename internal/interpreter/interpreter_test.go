@@ -115,27 +115,27 @@ func TestShifts(t *testing.T) {
 }
 
 func TestDefinition(t *testing.T) {
-	exprs := getExpressions("(def foo 10) (* foo 5)")
+	exprs := getExpressions("(set foo 10) (* foo 5)")
 	intr := NewInterpreter()
 	ret, _ := intr.Interpret(exprs)
 	assertNumber(t, 50, ret.(float64))
 }
 
 func TestEquals(t *testing.T) {
-	exprs := getExpressions("(def foo 10) (= foo 10)")
+	exprs := getExpressions("(set foo 10) (= foo 10)")
 	intr := NewInterpreter()
 	ret, _ := intr.Interpret(exprs)
 	assert(t, ret.(bool))
 
-	exprs = getExpressions("(def foo 10) (= foo 5)")
+	exprs = getExpressions("(set foo 10) (= foo 5)")
 	ret, _ = intr.Interpret(exprs)
 	assert(t, !ret.(bool))
 
-	exprs = getExpressions("(def bar \"dan\") (= bar \"dan\")")
+	exprs = getExpressions("(set bar \"dan\") (= bar \"dan\")")
 	ret, _ = intr.Interpret(exprs)
 	assert(t, ret.(bool))
 
-	exprs = getExpressions("(def bar \"dan\") (= foo \"egg\")")
+	exprs = getExpressions("(set bar \"dan\") (= foo \"egg\")")
 	ret, _ = intr.Interpret(exprs)
 	assert(t, !ret.(bool))
 }
@@ -171,7 +171,7 @@ func TestIfExpr(t *testing.T) {
 }
 
 func TestWhileExpr(t *testing.T) {
-	exprs := getExpressions(`(def x 5) (def total 0) (while (gt x 0) (def total (+ total x)) (def x (- x 1))) total`)
+	exprs := getExpressions(`(set x 5) (set total 0) (while (gt x 0) (set total (+ total x)) (set x (- x 1))) total`)
 	intr := NewInterpreter()
 	ret, _ := intr.Interpret(exprs)
 	assertNumber(t, 15, ret.(float64))
