@@ -2,8 +2,9 @@ package interpreter
 
 import (
 	"fmt"
-	"github.com/shaftoe44/danlisp/internal/expr"
 	"strings"
+
+	"github.com/shaftoe44/danlisp/internal/expr"
 )
 
 type Interpreter struct {
@@ -41,10 +42,21 @@ func (interpreter *Interpreter) eval(ex expr.Expr) (interface{}, error) {
 		return interpreter.evalIf(v)
 	case expr.While:
 		return interpreter.evalWhile(v)
+	case expr.Defun:
+		return interpreter.evalDefun(v)
 	}
 
-	fmt.Printf("%T %#v\n", ex, ex)
-	panic("Don't know how to eval this thing")
+	return nil, fmt.Errorf("don't know how to eval this thing %v of type %T", ex, ex)
+}
+
+func (interpreter *Interpreter) evalDefun(ex expr.Defun) (interface{}, error) {
+	arglist := []string{}
+	for _, a := range ex.Arglist {
+		arglist = append(arglist, a.Name)
+	}
+	callable := Callable{Arity: len(arglist), Args: arglist, Body: ex.Body}
+	interpreter.environment[ex.Name.Name] = callable
+	return nil, nil
 }
 
 func (interpreter *Interpreter) evalWhile(ex expr.While) (interface{}, error) {
@@ -89,14 +101,21 @@ func (interpreter *Interpreter) evalSeq(ex expr.Seq) (interface{}, error) {
 		}
 		args = append(args, arg)
 	}
-	applyer := symbol.(func(argv []interface{}) interface{})
-	return applyer(args), nil
+	//TODO convert builtins to Callables
+	switch s := symbol.(type) {
+	case func(argv []interface{}) interface{}:
+		applyer := symbol.(func(argv []interface{}) interface{})
+		return applyer(args), nil	
+	case ICallable:
+		return s.call(interpreter, args)
+	}
+	return nil, fmt.Errorf("did not know how to evaluate seq %v", ex)
 }
 
 func (interpreter *Interpreter) evalSet(ex expr.Set) (interface{}, error) {
 	val, err := interpreter.eval(ex.Value)
 	interpreter.environment[ex.Var.Name] = val
-	return val, err
+	return nil, err
 }
 
 func (interpreter *Interpreter) evalIf(iff expr.If) (interface{}, error) {

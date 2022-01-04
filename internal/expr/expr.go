@@ -29,3 +29,9 @@ type While struct {
 	Cond Expr
 	Body []Expr
 }
+
+type Defun struct {
+	Name     Symbol
+	Arglist []Symbol
+	Body    []Expr
+}

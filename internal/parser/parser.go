@@ -35,6 +35,7 @@ func (parser *Parser) GetExpressions(tokens []token.Token) ([]expr.Expr, error) 
 	return exprs, nil
 }
 
+// TODO make this switch
 func (parser *Parser) getExpression() (expr.Expr, error) {
 	switch parser.peek().TokenType {
 	case token.LB:
@@ -44,6 +45,8 @@ func (parser *Parser) getExpression() (expr.Expr, error) {
 			return parser.consumeIf()
 		} else if parser.next().TokenType == token.WHILE {
 			return parser.consumeWhile()
+		} else if parser.next().TokenType == token.DEFUN {
+			return parser.consumeDefun()
 		} else {
 			return parser.consumeSeq()
 		}
@@ -52,6 +55,42 @@ func (parser *Parser) getExpression() (expr.Expr, error) {
 	default:
 		return parser.consumeAtom()
 	}
+}
+
+
+func (parser *Parser) consumeDefun() (expr.Defun, error) {
+	// TODO Make a consumeExpected func
+	parser.consume() // Consume the LB
+	parser.consume() // Consume the defun
+
+	fnName := parser.consume()
+	if fnName.TokenType != token.KEYWORD {
+		return expr.Defun{}, fmt.Errorf("expected keyword but got %v", fnName)
+	}
+	fnSymb := expr.Symbol{Name: fnName.Lexeme}
+
+	parser.consume() // Consume the LB for arglist
+	argList := []expr.Symbol{}
+	for parser.current < parser.length && parser.peek().TokenType != token.RB {
+		a := parser.consume()
+		if a.TokenType != token.KEYWORD {
+			return expr.Defun{}, fmt.Errorf("arguments must be symbols but got %v", a)
+		}
+		argList = append(argList, expr.Symbol{Name: a.Lexeme})
+	}
+	parser.consume() // Consume the RB after arglist
+
+	body := []expr.Expr{}
+	for parser.current < parser.length && parser.peek().TokenType != token.RB {
+		e, err := parser.getExpression()
+		if err != nil {
+			return expr.Defun{}, err
+		}
+		body = append(body, e)
+	}
+	parser.consume() // Consume the RB after function body
+
+	return expr.Defun{Name: fnSymb, Arglist: argList, Body: body}, nil
 }
 
 func (parser *Parser) consumeWhile() (expr.While, error) {

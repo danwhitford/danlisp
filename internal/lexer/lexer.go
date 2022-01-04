@@ -58,6 +58,8 @@ func (lexer *Lexer) GetTokens() ([]token.Token, error) {
 				tokens = append(tokens, token.Token{TokenType: token.IF, Lexeme: lexeme, Line: lexer.line})
 			} else if lexeme == "while" {
 				tokens = append(tokens, token.Token{TokenType: token.WHILE, Lexeme: lexeme, Line: lexer.line})
+			} else if lexeme == "defun" {
+				tokens = append(tokens, token.Token{TokenType: token.DEFUN, Lexeme: lexeme, Line: lexer.line})
 			} else {
 				tokens = append(tokens, token.Token{TokenType: token.KEYWORD, Lexeme: lexeme, Line: lexer.line})
 			}
@@ -106,16 +108,6 @@ func (lexer *Lexer) consumeLexeme() string {
 	}
 	return b.String()
 }
-
-// func consumeKeyword() token.Token {
-// 	var b strings.Builder
-// 	var c string
-// 	for current < length && !endsToken(peek()) {
-// 		c = consume()
-// 		b.WriteString(c)
-// 	}
-// 	return token.Token{TokenType: token.KEYWORD, Lexeme: b.String(), Line: 1}
-// }
 
 func (lexer *Lexer) consumeNumber() (token.Token, error) {
 	var b strings.Builder

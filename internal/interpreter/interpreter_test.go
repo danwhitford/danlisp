@@ -186,3 +186,13 @@ func TestNestedError(t *testing.T) {
 	}
 	assertString(t, "runtime error. Could not find symbol 'foo'", err.Error())
 }
+
+func TestAdderFunc(t *testing.T) {
+	exprs := getExpressions("(defun adder (a b) (+ a b)) (adder 2 3)")
+	intr := NewInterpreter()
+	ret, err := intr.Interpret(exprs)
+	if err != nil {
+		t.Fatalf("Not expecting error but got %v", err)
+	}
+	assertNumber(t, 5, ret.(float64))
+}
