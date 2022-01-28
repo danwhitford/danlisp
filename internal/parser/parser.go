@@ -21,7 +21,7 @@ func NewParser(tokens []token.Token) Parser {
 	}
 }
 
-func (parser *Parser) GetExpressions(tokens []token.Token) ([]expr.Expr, error) {
+func (parser *Parser) GetExpressions() ([]expr.Expr, error) {
 	exprs := []expr.Expr{}
 
 	for parser.current < parser.length {

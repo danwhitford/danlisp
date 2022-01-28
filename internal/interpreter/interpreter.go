@@ -61,9 +61,14 @@ func (interpreter *Interpreter) evalDefun(ex expr.Defn) (interface{}, error) {
 
 func (interpreter *Interpreter) evalWhile(ex expr.While) (interface{}, error) {
 	var retval interface{}
-	for c, err := interpreter.eval(ex.Cond); isTruthy(c); c, err = interpreter.eval(ex.Cond) {
+
+	for {
+		c, err := interpreter.eval(ex.Cond)
 		if err != nil {
 			return nil, err
+		}
+		if !isTruthy(c) {
+			break
 		}
 		for _, line := range ex.Body {
 			val, er := interpreter.eval(line)

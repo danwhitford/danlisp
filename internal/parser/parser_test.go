@@ -24,7 +24,7 @@ func TestNumber(t *testing.T) {
 	lex := lexer.NewLexer(input)
 	tokens, _ := lex.GetTokens()
 	parser := NewParser(tokens)
-	expressions, _ := parser.GetExpressions(tokens)
+	expressions, _ := parser.GetExpressions()
 	assertNumber(t, 123.7, expressions[0].(expr.Atom).Value.(float64))
 }
 
@@ -33,7 +33,7 @@ func TestString(t *testing.T) {
 	lex := lexer.NewLexer(input)
 	tokens, _ := lex.GetTokens()
 	parser := NewParser(tokens)
-	expressions, _ := parser.GetExpressions(tokens)
+	expressions, _ := parser.GetExpressions()
 	assertString(t, "egghead", expressions[0].(expr.Atom).Value.(string))
 }
 
@@ -42,7 +42,7 @@ func TestSeq(t *testing.T) {
 	lex := lexer.NewLexer(input)
 	tokens, _ := lex.GetTokens()
 	parser := NewParser(tokens)
-	expressions, _ := parser.GetExpressions(tokens)
+	expressions, _ := parser.GetExpressions()
 	seq := expressions[0].(expr.Seq)
 	for i := 0; i < 6; i++ {
 		val := seq.Exprs[i].(expr.Atom).Value.(float64)
@@ -55,7 +55,7 @@ func TestNestedSeq(t *testing.T) {
 	lex := lexer.NewLexer(input)
 	tokens, _ := lex.GetTokens()
 	parser := NewParser(tokens)
-	expressions, _ := parser.GetExpressions(tokens)
+	expressions, _ := parser.GetExpressions()
 	sym, ok := expressions[0].(expr.Seq).Exprs[0].(expr.Symbol)
 	if !ok {
 		t.Fatalf("Expected symbol to be symbol")
@@ -80,7 +80,7 @@ func TestErrorWhenSeqNotClosed(t *testing.T) {
 	lex := lexer.NewLexer(input)
 	tokens, _ := lex.GetTokens()
 	parser := NewParser(tokens)
-	_, err := parser.GetExpressions(tokens)
+	_, err := parser.GetExpressions()
 	assertString(t, "parse error. missing ')' to close sequence", err.Error())
 }
 
@@ -89,7 +89,7 @@ func TestDefinition(t *testing.T) {
 	lex := lexer.NewLexer(input)
 	tokens, _ := lex.GetTokens()
 	parser := NewParser(tokens)
-	exprs, _ := parser.GetExpressions(tokens)
+	exprs, _ := parser.GetExpressions()
 	defe, ok := exprs[0].(expr.Set)
 	if !ok {
 		t.Fatalf("Conversion to Set expression failed")
@@ -103,7 +103,7 @@ func TestIf(t *testing.T) {
 	lex := lexer.NewLexer(input)
 	tokens, _ := lex.GetTokens()
 	parser := NewParser(tokens)
-	exprs, _ := parser.GetExpressions(tokens)
+	exprs, _ := parser.GetExpressions()
 	ife, ok := exprs[0].(expr.If)
 	if !ok {
 		t.Fatalf("Conversion to If expression failed")
@@ -124,7 +124,7 @@ func TestWhile(t *testing.T) {
 	lex := lexer.NewLexer(input)
 	tokens, _ := lex.GetTokens()
 	parser := NewParser(tokens)
-	exprs, _ := parser.GetExpressions(tokens)
+	exprs, _ := parser.GetExpressions()
 	ife, ok := exprs[0].(expr.While)
 	if !ok {
 		t.Fatalf("Conversion to While expression failed")

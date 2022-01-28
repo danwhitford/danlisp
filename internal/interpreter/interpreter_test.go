@@ -30,7 +30,7 @@ func getExpressions(input string) []expr.Expr {
 	lex := lexer.NewLexer(input)
 	tokens, _ := lex.GetTokens()
 	parser := parser.NewParser(tokens)
-	exprs, _ := parser.GetExpressions(tokens)
+	exprs, _ := parser.GetExpressions()
 	return exprs
 }
 
@@ -178,7 +178,17 @@ func TestWhileExpr(t *testing.T) {
 }
 
 func TestNestedError(t *testing.T) {
-	exprs := getExpressions(`(if (foo 5) "y" "n"))`)
+	exprs := getExpressions(`(if (foo 5) "y" "n")`)
+	intr := NewInterpreter()
+	_, err := intr.Interpret(exprs)
+	if err == nil {
+		t.Fatal("Expecting error")
+	}
+	assertString(t, "runtime error. Could not find symbol 'foo'", err.Error())
+}
+
+func TestNestedErrorWhile(t *testing.T) {
+	exprs := getExpressions(`(while (foo 5) (prn "foo power"))`)
 	intr := NewInterpreter()
 	_, err := intr.Interpret(exprs)
 	if err == nil {
