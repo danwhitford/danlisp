@@ -10,7 +10,7 @@ const (
 	SET
 	IF
 	WHILE
-	DEFUN
+	DEFN
 )
 
 type Token struct {

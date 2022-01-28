@@ -188,7 +188,7 @@ func TestNestedError(t *testing.T) {
 }
 
 func TestAdderFunc(t *testing.T) {
-	exprs := getExpressions("(defun adder (a b) (+ a b)) (adder 2 3)")
+	exprs := getExpressions("(defn adder (a b) (+ a b)) (adder 2 3)")
 	intr := NewInterpreter()
 	ret, err := intr.Interpret(exprs)
 	if err != nil {

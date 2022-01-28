@@ -42,14 +42,14 @@ func (interpreter *Interpreter) eval(ex expr.Expr) (interface{}, error) {
 		return interpreter.evalIf(v)
 	case expr.While:
 		return interpreter.evalWhile(v)
-	case expr.Defun:
+	case expr.Defn:
 		return interpreter.evalDefun(v)
 	}
 
 	return nil, fmt.Errorf("don't know how to eval this thing %v of type %T", ex, ex)
 }
 
-func (interpreter *Interpreter) evalDefun(ex expr.Defun) (interface{}, error) {
+func (interpreter *Interpreter) evalDefun(ex expr.Defn) (interface{}, error) {
 	arglist := []string{}
 	for _, a := range ex.Arglist {
 		arglist = append(arglist, a.Name)

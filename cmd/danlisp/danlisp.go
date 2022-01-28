@@ -20,7 +20,7 @@ ______            _     _
                              | |    
                              |_|    `
 
-func main() {
+func repl() {
 	scanner := bufio.NewScanner(os.Stdin)
 	intr := interpreter.NewInterpreter()
 	var lxr lexer.Lexer
@@ -59,4 +59,8 @@ func main() {
 
 		fmt.Printf("%v\n", res)
 	}
+}
+
+func main() {
+	repl()
 }

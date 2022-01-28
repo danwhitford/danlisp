@@ -30,7 +30,7 @@ type While struct {
 	Body []Expr
 }
 
-type Defun struct {
+type Defn struct {
 	Name     Symbol
 	Arglist []Symbol
 	Body    []Expr
