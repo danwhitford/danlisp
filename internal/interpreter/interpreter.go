@@ -140,6 +140,9 @@ func (interpreter *Interpreter) evalIf(iff expr.If) (interface{}, error) {
 func NewEnvironment() map[string]interface{} {
 	env := make(map[string]interface{})
 
+	// Built in vars
+	env["t"] = true
+
 	// Basic operators
 	// env["+"] = func(argv []interface{}) interface{} { return argv[0].(float64) + argv[1].(float64) }
 	env["+"] = BuiltIn{func(argv []interface{}) interface{} { return argv[0].(float64) + argv[1].(float64) }}
