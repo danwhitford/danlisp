@@ -238,6 +238,5 @@ func TestConsNiceError(t *testing.T) {
 	if err == nil {
 		t.Fatal("Expecting an error")
 	}
-	assertString(t, err.Error(), "could not cons the value 2 was not a ConsCell but a float64")
-
+	assertString(t, err.Error(), "could not cons, the value 2 was not a ConsCell but a float64")
 }

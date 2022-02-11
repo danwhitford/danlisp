@@ -188,7 +188,7 @@ func NewEnvironment() map[string]interface{} {
 		case nil:
 			return cons.Cons(argv[0], nil), nil
 		}
-		return nil, fmt.Errorf("could not cons the value %v was not a ConsCell but a %T", argv[1], argv[1])
+		return nil, fmt.Errorf("could not cons, the value %v was not a ConsCell but a %T", argv[1], argv[1])
 	}
 
 	return env
