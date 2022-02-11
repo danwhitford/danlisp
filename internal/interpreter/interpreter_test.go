@@ -230,3 +230,14 @@ func TestCreateCons(t *testing.T) {
 		t.Fatalf("Expecting nil but got %v", ret.(cons.ConsCell).Cdr)
 	}
 }
+
+func TestConsNiceError(t *testing.T) {
+	exprs := getExpressions("(cons 1 2)")
+	intr := NewInterpreter()
+	_, err := intr.Interpret(exprs)
+	if err == nil {
+		t.Fatal("Expecting an error")
+	}
+	assertString(t, err.Error(), "could not cons the value 2 was not a ConsCell but a float64")
+
+}

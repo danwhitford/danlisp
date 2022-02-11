@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/shaftoe44/danlisp/internal/callable"
 	"github.com/shaftoe44/danlisp/internal/datastructures/cons"
 	"github.com/shaftoe44/danlisp/internal/expr"
 )
@@ -55,7 +56,7 @@ func (interpreter *Interpreter) evalDefun(ex expr.Defn) (interface{}, error) {
 	for _, a := range ex.Arglist {
 		arglist = append(arglist, a.Name)
 	}
-	callable := Callable{Arity: len(arglist), Args: arglist, Body: ex.Body}
+	callable := callable.Callable{Arity: len(arglist), Args: arglist, Body: ex.Body}
 	interpreter.environment[ex.Name.Name] = callable
 	return nil, nil
 }
@@ -109,8 +110,12 @@ func (interpreter *Interpreter) evalSeq(ex expr.Seq) (interface{}, error) {
 	}
 	//TODO convert builtins to Callables
 	switch s := symbol.(type) {
-	case ICallable:
-		return s.call(interpreter, args)
+	case callable.Callable:
+		return interpreter.call(s, args)
+	case func([]interface{}) interface{}:
+		return s(args), nil
+	case func([]interface{}) (interface{}, error):
+		return s(args)
 	}
 	return nil, fmt.Errorf("did not know how to evaluate seq %v", ex)
 }
@@ -142,50 +147,49 @@ func NewEnvironment() map[string]interface{} {
 	env["t"] = true
 
 	// Basic operators
-	// env["+"] = func(argv []interface{}) interface{} { return argv[0].(float64) + argv[1].(float64) }
-	env["+"] = BuiltIn{func(argv []interface{}) interface{} { return argv[0].(float64) + argv[1].(float64) }}
-	env["-"] = BuiltIn{func(argv []interface{}) interface{} { return argv[0].(float64) - argv[1].(float64) }}
-	env["*"] = BuiltIn{func(argv []interface{}) interface{} { return argv[0].(float64) * argv[1].(float64) }}
-	env["/"] = BuiltIn{func(argv []interface{}) interface{} { return argv[0].(float64) / argv[1].(float64) }}
-	env["mod"] = BuiltIn{func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) % int(argv[1].(float64))) }}
+	env["+"] = func(argv []interface{}) interface{} { return argv[0].(float64) + argv[1].(float64) }
+	env["-"] = func(argv []interface{}) interface{} { return argv[0].(float64) - argv[1].(float64) }
+	env["*"] = func(argv []interface{}) interface{} { return argv[0].(float64) * argv[1].(float64) }
+	env["/"] = func(argv []interface{}) interface{} { return argv[0].(float64) / argv[1].(float64) }
+	env["mod"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) % int(argv[1].(float64))) }
 
 	// Bitwise ops
-	env["&"] = BuiltIn{func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) & int(argv[1].(float64))) }}
-	env["|"] = BuiltIn{func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) | int(argv[1].(float64))) }}
-	env["^"] = BuiltIn{func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) ^ int(argv[1].(float64))) }}
-	env["&^"] = BuiltIn{func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) &^ int(argv[1].(float64))) }}
-	env[">>"] = BuiltIn{func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) >> int(argv[1].(float64))) }}
-	env["<<"] = BuiltIn{func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) << int(argv[1].(float64))) }}
+	env["&"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) & int(argv[1].(float64))) }
+	env["|"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) | int(argv[1].(float64))) }
+	env["^"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) ^ int(argv[1].(float64))) }
+	env["&^"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) &^ int(argv[1].(float64))) }
+	env[">>"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) >> int(argv[1].(float64))) }
+	env["<<"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) << int(argv[1].(float64))) }
 
 	// Boleans
-	env["="] = BuiltIn{func(argv []interface{}) interface{} { return argv[0] == argv[1] }}
-	env["and"] = BuiltIn{func(argv []interface{}) interface{} { return isTruthy(argv[0]) && isTruthy(argv[1]) }}
-	env["or"] = BuiltIn{func(argv []interface{}) interface{} { return isTruthy(argv[0]) || isTruthy(argv[1]) }}
+	env["="] = func(argv []interface{}) interface{} { return argv[0] == argv[1] }
+	env["and"] = func(argv []interface{}) interface{} { return isTruthy(argv[0]) && isTruthy(argv[1]) }
+	env["or"] = func(argv []interface{}) interface{} { return isTruthy(argv[0]) || isTruthy(argv[1]) }
 
 	// Compparison
-	env["gt"] = BuiltIn{func(argv []interface{}) interface{} { return argv[0].(float64) > argv[1].(float64) }}
-	env["lt"] = BuiltIn{func(argv []interface{}) interface{} { return argv[0].(float64) < argv[1].(float64) }}
+	env["gt"] = func(argv []interface{}) interface{} { return argv[0].(float64) > argv[1].(float64) }
+	env["lt"] = func(argv []interface{}) interface{} { return argv[0].(float64) < argv[1].(float64) }
 
 	// Utility
-	env["prn"] = BuiltIn{func(argv []interface{}) interface{} {
+	env["prn"] = func(argv []interface{}) interface{} {
 		strs := []string{}
 		for _, v := range argv {
 			strs = append(strs, fmt.Sprintf("%v", v))
 		}
 		p, _ := fmt.Println(strings.Join(strs, " "))
 		return p
-	}}
+	}
 
 	//Cons
-	env["cons"] = BuiltIn{func(argv []interface{}) interface{} {
+	env["cons"] = func(argv []interface{}) (interface{}, error) {
 		switch cdr := argv[1].(type) {
 		case cons.ConsCell:
-			return cons.Cons(argv[0], &cdr)
+			return cons.Cons(argv[0], &cdr), nil
 		case nil:
-			return cons.Cons(argv[0], nil)
+			return cons.Cons(argv[0], nil), nil
 		}
-		panic("cons failed cdr is bad")
-	}}
+		return nil, fmt.Errorf("could not cons the value %v was not a ConsCell but a %T", argv[1], argv[1])
+	}
 
 	return env
 }
@@ -195,4 +199,20 @@ func isTruthy(v interface{}) bool {
 		return b
 	}
 	return v != nil
+}
+
+// TODO check arity and stuff
+func (context *Interpreter) call(callable callable.Callable, argv []interface{}) (interface{}, error) {
+	for i, a := range argv {
+		context.environment[callable.Args[i]] = a
+	}
+	var retval interface{}
+	var err error
+	for _, e := range callable.Body {
+		retval, err = context.eval(e)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return retval, nil
 }
