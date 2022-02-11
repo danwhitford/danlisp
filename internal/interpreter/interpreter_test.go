@@ -206,3 +206,13 @@ func TestAdderFunc(t *testing.T) {
 	}
 	assertNumber(t, 5, ret.(float64))
 }
+
+func TestNilIsFalse(t *testing.T) {
+	exprs := getExpressions("(set b nil) (if b 1 0)")
+	intr := NewInterpreter()
+	ret, err := intr.Interpret(exprs)
+	if err != nil {
+		t.Fatalf("Not expecting error but got %v", err)
+	}
+	assertNumber(t, 0, ret.(float64))
+}

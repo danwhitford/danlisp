@@ -146,7 +146,6 @@ func NewEnvironment() map[string]interface{} {
 	// Basic operators
 	// env["+"] = func(argv []interface{}) interface{} { return argv[0].(float64) + argv[1].(float64) }
 	env["+"] = BuiltIn{func(argv []interface{}) interface{} { return argv[0].(float64) + argv[1].(float64) }}
-
 	env["-"] = func(argv []interface{}) interface{} { return argv[0].(float64) - argv[1].(float64) }
 	env["*"] = func(argv []interface{}) interface{} { return argv[0].(float64) * argv[1].(float64) }
 	env["/"] = func(argv []interface{}) interface{} { return argv[0].(float64) / argv[1].(float64) }
