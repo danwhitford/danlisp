@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/shaftoe44/danlisp/internal/datastructures/cons"
 	"github.com/shaftoe44/danlisp/internal/expr"
 )
 
@@ -108,9 +109,6 @@ func (interpreter *Interpreter) evalSeq(ex expr.Seq) (interface{}, error) {
 	}
 	//TODO convert builtins to Callables
 	switch s := symbol.(type) {
-	case func(argv []interface{}) interface{}:
-		applyer := symbol.(func(argv []interface{}) interface{})
-		return applyer(args), nil	
 	case ICallable:
 		return s.call(interpreter, args)
 	}
@@ -146,37 +144,48 @@ func NewEnvironment() map[string]interface{} {
 	// Basic operators
 	// env["+"] = func(argv []interface{}) interface{} { return argv[0].(float64) + argv[1].(float64) }
 	env["+"] = BuiltIn{func(argv []interface{}) interface{} { return argv[0].(float64) + argv[1].(float64) }}
-	env["-"] = func(argv []interface{}) interface{} { return argv[0].(float64) - argv[1].(float64) }
-	env["*"] = func(argv []interface{}) interface{} { return argv[0].(float64) * argv[1].(float64) }
-	env["/"] = func(argv []interface{}) interface{} { return argv[0].(float64) / argv[1].(float64) }
-	env["mod"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) % int(argv[1].(float64))) }
+	env["-"] = BuiltIn{func(argv []interface{}) interface{} { return argv[0].(float64) - argv[1].(float64) }}
+	env["*"] = BuiltIn{func(argv []interface{}) interface{} { return argv[0].(float64) * argv[1].(float64) }}
+	env["/"] = BuiltIn{func(argv []interface{}) interface{} { return argv[0].(float64) / argv[1].(float64) }}
+	env["mod"] = BuiltIn{func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) % int(argv[1].(float64))) }}
 
 	// Bitwise ops
-	env["&"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) & int(argv[1].(float64))) }
-	env["|"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) | int(argv[1].(float64))) }
-	env["^"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) ^ int(argv[1].(float64))) }
-	env["&^"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) &^ int(argv[1].(float64))) }
-	env[">>"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) >> int(argv[1].(float64))) }
-	env["<<"] = func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) << int(argv[1].(float64))) }
+	env["&"] = BuiltIn{func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) & int(argv[1].(float64))) }}
+	env["|"] = BuiltIn{func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) | int(argv[1].(float64))) }}
+	env["^"] = BuiltIn{func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) ^ int(argv[1].(float64))) }}
+	env["&^"] = BuiltIn{func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) &^ int(argv[1].(float64))) }}
+	env[">>"] = BuiltIn{func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) >> int(argv[1].(float64))) }}
+	env["<<"] = BuiltIn{func(argv []interface{}) interface{} { return float64(int(argv[0].(float64)) << int(argv[1].(float64))) }}
 
 	// Boleans
-	env["="] = func(argv []interface{}) interface{} { return argv[0] == argv[1] }
-	env["and"] = func(argv []interface{}) interface{} { return isTruthy(argv[0]) && isTruthy(argv[1]) }
-	env["or"] = func(argv []interface{}) interface{} { return isTruthy(argv[0]) || isTruthy(argv[1]) }
+	env["="] = BuiltIn{func(argv []interface{}) interface{} { return argv[0] == argv[1] }}
+	env["and"] = BuiltIn{func(argv []interface{}) interface{} { return isTruthy(argv[0]) && isTruthy(argv[1]) }}
+	env["or"] = BuiltIn{func(argv []interface{}) interface{} { return isTruthy(argv[0]) || isTruthy(argv[1]) }}
 
 	// Compparison
-	env["gt"] = func(argv []interface{}) interface{} { return argv[0].(float64) > argv[1].(float64) }
-	env["lt"] = func(argv []interface{}) interface{} { return argv[0].(float64) < argv[1].(float64) }
+	env["gt"] = BuiltIn{func(argv []interface{}) interface{} { return argv[0].(float64) > argv[1].(float64) }}
+	env["lt"] = BuiltIn{func(argv []interface{}) interface{} { return argv[0].(float64) < argv[1].(float64) }}
 
 	// Utility
-	env["prn"] = func(argv []interface{}) interface{} {
+	env["prn"] = BuiltIn{func(argv []interface{}) interface{} {
 		strs := []string{}
 		for _, v := range argv {
 			strs = append(strs, fmt.Sprintf("%v", v))
 		}
 		p, _ := fmt.Println(strings.Join(strs, " "))
 		return p
-	}
+	}}
+
+	//Cons
+	env["cons"] = BuiltIn{func(argv []interface{}) interface{} {
+		switch cdr := argv[1].(type) {
+		case cons.ConsCell:
+			return cons.Cons(argv[0], &cdr)
+		case nil:
+			return cons.Cons(argv[0], nil)
+		}
+		panic("cons failed cdr is bad")
+	}}
 
 	return env
 }

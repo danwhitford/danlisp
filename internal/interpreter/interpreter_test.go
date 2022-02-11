@@ -6,6 +6,7 @@ import (
 	"github.com/shaftoe44/danlisp/internal/expr"
 	"github.com/shaftoe44/danlisp/internal/lexer"
 	"github.com/shaftoe44/danlisp/internal/parser"
+	"github.com/shaftoe44/danlisp/internal/datastructures/cons"
 )
 
 func assertString(t *testing.T, expected, actual string) {
@@ -215,4 +216,17 @@ func TestNilIsFalse(t *testing.T) {
 		t.Fatalf("Not expecting error but got %v", err)
 	}
 	assertNumber(t, 0, ret.(float64))
+}
+
+func TestCreateCons(t *testing.T) {
+	exprs := getExpressions("(cons 1 nil)")
+	intr := NewInterpreter()
+	ret, err := intr.Interpret(exprs)
+	if err != nil {
+		t.Fatalf("Not expecting error but got %v", err)
+	}
+	assertNumber(t, 1, ret.(cons.ConsCell).Car.(float64))
+	if ret.(cons.ConsCell).Cdr != nil {
+		t.Fatalf("Expecting nil but got %v", ret.(cons.ConsCell).Cdr)
+	}
 }
