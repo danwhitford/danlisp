@@ -5,8 +5,9 @@ import (
 	"strings"
 
 	"github.com/shaftoe44/danlisp/internal/callable"
-	"github.com/shaftoe44/danlisp/internal/datastructures/cons"
 	"github.com/shaftoe44/danlisp/internal/expr"
+	"github.com/shaftoe44/danlisp/internal/stdlib/datastructures/cons"
+	"github.com/shaftoe44/danlisp/internal/stdlib/wrappers"
 )
 
 type Interpreter struct {
@@ -166,7 +167,7 @@ func NewEnvironment() map[string]interface{} {
 	env["and"] = func(argv []interface{}) interface{} { return isTruthy(argv[0]) && isTruthy(argv[1]) }
 	env["or"] = func(argv []interface{}) interface{} { return isTruthy(argv[0]) || isTruthy(argv[1]) }
 
-	// Compparison
+	// Comparison
 	env["gt"] = func(argv []interface{}) interface{} { return argv[0].(float64) > argv[1].(float64) }
 	env["lt"] = func(argv []interface{}) interface{} { return argv[0].(float64) < argv[1].(float64) }
 
@@ -180,45 +181,8 @@ func NewEnvironment() map[string]interface{} {
 		return p
 	}
 
-	//Cons
-	env["cons"] = func(argv []interface{}) (interface{}, error) {
-		switch cdr := argv[1].(type) {
-		case cons.ConsCell:
-			return cons.Cons(argv[0], &cdr), nil
-		case nil:
-			return cons.Cons(argv[0], nil), nil
-		}
-		return nil, fmt.Errorf("could not cons, the value %v was not a ConsCell but a %T", argv[1], argv[1])
-	}
-	env["car"] = func(argv []interface{}) (interface{}, error) {
-		switch cons := argv[0].(type) {
-		case cons.ConsCell:
-			return cons.Car, nil
-		}
-		return nil, fmt.Errorf("can only car a cons cell but not %v, which is %t", argv[0], argv[0])
-	}
-	env["cdr"] = func(argv []interface{}) (interface{}, error) {
-		switch cons := argv[0].(type) {
-		case cons.ConsCell:
-			return *cons.Cdr, nil
-		}
-		return nil, fmt.Errorf("can only cdr a cons cell but not %v, which is %t", argv[0], argv[0])
-	}
-	env["list"] = func(argv []interface{}) (interface{}, error) {
-		var val interface{}
-		var outer cons.ConsCell
-		for l := len(argv) - 1; l >= 0; l-- {
-			switch cdr := val.(type) {
-			case nil:
-				outer = cons.Cons(argv[l], nil)
-			case cons.ConsCell:
-				outer = cons.Cons(argv[l], &cdr)
-
-			}
-			val = outer
-		}
-		return outer, nil
-	}
+	cons.Import(env)
+	stringswrapper.Import(env)
 
 	return env
 }

@@ -1,0 +1,11 @@
+package {{ lower .Pkg }}wrapper
+
+import "{{ .Pkg }}"
+
+func Import(env map[string]interface{}) {
+    {{ range .Fns }}
+        env["{{ $.Pkg }}/{{ .Name }}"] = func(argv []interface{}) (interface{}, error) {        
+            return {{ $.Pkg }}.{{ .Name }}({{ arglist .ArgTypes }}), nil
+        }
+    {{ end }}
+}

@@ -3,10 +3,10 @@ package interpreter
 import (
 	"testing"
 
-	"github.com/shaftoe44/danlisp/internal/datastructures/cons"
 	"github.com/shaftoe44/danlisp/internal/expr"
 	"github.com/shaftoe44/danlisp/internal/lexer"
 	"github.com/shaftoe44/danlisp/internal/parser"
+	"github.com/shaftoe44/danlisp/internal/stdlib/datastructures/cons"
 )
 
 func assertString(t *testing.T, expected, actual string) {
