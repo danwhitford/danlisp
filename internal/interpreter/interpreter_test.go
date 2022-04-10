@@ -3,10 +3,10 @@ package interpreter
 import (
 	"testing"
 
+	"github.com/shaftoe44/danlisp/internal/datastructures/cons"
 	"github.com/shaftoe44/danlisp/internal/expr"
 	"github.com/shaftoe44/danlisp/internal/lexer"
 	"github.com/shaftoe44/danlisp/internal/parser"
-	"github.com/shaftoe44/danlisp/internal/datastructures/cons"
 )
 
 func assertString(t *testing.T, expected, actual string) {
@@ -239,4 +239,44 @@ func TestConsNiceError(t *testing.T) {
 		t.Fatal("Expecting an error")
 	}
 	assertString(t, err.Error(), "could not cons, the value 2 was not a ConsCell but a float64")
+}
+
+func TestCar(t *testing.T) {
+	exprs := getExpressions(`
+		(set x (cons 1 (cons 2 nil)))
+		(car x)
+	`)
+	intr := NewInterpreter()
+	ret, err := intr.Interpret(exprs)
+	if err != nil {
+		t.Fatalf("Not expecting error but got %v", err)
+	}
+	assertNumber(t, 1, ret.(float64))
+}
+
+func TestCdr(t *testing.T) {
+	exprs := getExpressions(`
+		(set x (cons 1 (cons 2 nil)))
+		(cdr x)
+	`)
+	intr := NewInterpreter()
+	ret, err := intr.Interpret(exprs)
+	if err != nil {
+		t.Fatalf("Not expecting error but got %v", err)
+	}
+	assertNumber(t, 2, ret.(cons.ConsCell).Car.(float64))
+}
+
+func TestListFunc(t *testing.T) {
+	exprs := getExpressions(`
+	(set x (list 1 2 3))
+	x`)
+	intr := NewInterpreter()
+	ret, err := intr.Interpret(exprs)
+	if err != nil {
+		t.Fatalf("Not expecting error but got %v", err)
+	}
+	assertNumber(t, 1, ret.(cons.ConsCell).Car.(float64))
+	assertNumber(t, 2, ret.(cons.ConsCell).Cdr.Car.(float64))
+	assertNumber(t, 3, ret.(cons.ConsCell).Cdr.Cdr.Car.(float64))
 }

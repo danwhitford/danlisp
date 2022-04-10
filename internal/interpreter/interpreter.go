@@ -190,6 +190,35 @@ func NewEnvironment() map[string]interface{} {
 		}
 		return nil, fmt.Errorf("could not cons, the value %v was not a ConsCell but a %T", argv[1], argv[1])
 	}
+	env["car"] = func(argv []interface{}) (interface{}, error) {
+		switch cons := argv[0].(type) {
+		case cons.ConsCell:
+			return cons.Car, nil
+		}
+		return nil, fmt.Errorf("can only car a cons cell but not %v, which is %t", argv[0], argv[0])
+	}
+	env["cdr"] = func(argv []interface{}) (interface{}, error) {
+		switch cons := argv[0].(type) {
+		case cons.ConsCell:
+			return *cons.Cdr, nil
+		}
+		return nil, fmt.Errorf("can only cdr a cons cell but not %v, which is %t", argv[0], argv[0])
+	}
+	env["list"] = func(argv []interface{}) (interface{}, error) {
+		var val interface{}
+		var outer cons.ConsCell
+		for l := len(argv) - 1; l >= 0; l-- {
+			switch cdr := val.(type) {
+			case nil:
+				outer = cons.Cons(argv[l], nil)
+			case cons.ConsCell:
+				outer = cons.Cons(argv[l], &cdr)
+
+			}
+			val = outer
+		}
+		return outer, nil
+	}
 
 	return env
 }
