@@ -57,7 +57,6 @@ func (parser *Parser) getExpression() (expr.Expr, error) {
 	}
 }
 
-
 func (parser *Parser) consumeDefun() (expr.Defn, error) {
 	// TODO Make a consumeExpected func
 	parser.consume() // Consume the LB

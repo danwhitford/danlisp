@@ -2,12 +2,12 @@ package main
 
 import (
 	"bufio"
-	"fmt"
-	"os"
 	"flag"
+	"fmt"
 	"github.com/shaftoe44/danlisp/internal/interpreter"
 	"github.com/shaftoe44/danlisp/internal/lexer"
 	"github.com/shaftoe44/danlisp/internal/parser"
+	"os"
 )
 
 var header string = `

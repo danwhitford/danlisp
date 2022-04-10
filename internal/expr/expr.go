@@ -31,7 +31,7 @@ type While struct {
 }
 
 type Defn struct {
-	Name     Symbol
+	Name    Symbol
 	Arglist []Symbol
 	Body    []Expr
 }
