@@ -1,0 +1,7 @@
+(set l (list 1 2 3 4 5 6 7 8 9))
+(set total 0)
+(while l
+    (set hd (car l))
+    (set l (cdr l))
+    (set total (+ total hd)))
+(prn "Total: " total)
