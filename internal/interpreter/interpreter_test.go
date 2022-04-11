@@ -282,9 +282,26 @@ func TestListFunc(t *testing.T) {
 }
 
 func TestCarNil(t *testing.T) {
-	t.Fatalf("not implemented")
+	exprs := getExpressions(`
+	(car nil)`)
+	intr := NewInterpreter()
+	ret, err := intr.Interpret(exprs)
+	if err != nil {
+		t.Fatalf("Not expecting error but got %v", err)
+	}
+	if ret != nil {
+		t.Fatalf("Expected nil but got %v", ret)
+	}
 }
 
 func TestCdrNil(t *testing.T) {
-	t.Fatalf("not implemented")
-}
+	exprs := getExpressions(`
+	(cdr nil)`)
+	intr := NewInterpreter()
+	ret, err := intr.Interpret(exprs)
+	if err != nil {
+		t.Fatalf("Not expecting error but got %v", err)
+	}
+	if ret != nil {
+		t.Fatalf("Expected nil but got %v", ret)
+	}}
