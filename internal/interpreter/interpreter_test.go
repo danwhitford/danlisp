@@ -304,4 +304,5 @@ func TestCdrNil(t *testing.T) {
 	}
 	if ret != nil {
 		t.Fatalf("Expected nil but got %v", ret)
-	}}
+	}
+}

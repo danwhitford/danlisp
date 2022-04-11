@@ -17,7 +17,7 @@ type WrapperFnArgs struct {
 }
 
 type WrapperFns struct {
-	Name  string
+	Name     string
 	ArgTypes []string
 }
 
@@ -30,10 +30,10 @@ func main() {
 	stringsWrapper := Wrapper{
 		Pkg: "strings",
 		Fns: []WrapperFns{{
-			Name:  "Contains",
+			Name:     "Contains",
 			ArgTypes: []string{"string", "string"},
 		}, {
-			Name:  "Join",
+			Name:     "Join",
 			ArgTypes: []string{"[]string", "string"},
 		}},
 	}
