@@ -280,3 +280,11 @@ func TestListFunc(t *testing.T) {
 	assertNumber(t, 2, ret.(cons.ConsCell).Cdr.Car.(float64))
 	assertNumber(t, 3, ret.(cons.ConsCell).Cdr.Cdr.Car.(float64))
 }
+
+func TestCarNil(t *testing.T) {
+	t.Fatalf("not implemented")
+}
+
+func TestCdrNil(t *testing.T) {
+	t.Fatalf("not implemented")
+}

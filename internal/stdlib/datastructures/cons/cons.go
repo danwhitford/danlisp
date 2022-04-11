@@ -26,6 +26,8 @@ func Import(env map[string]interface{}) {
 		switch cons := argv[0].(type) {
 		case ConsCell:
 			return cons.Car, nil
+		case nil:
+			return nil, nil
 		}
 		return nil, fmt.Errorf("can only car a cons cell but not %v, which is %t", argv[0], argv[0])
 	}
@@ -33,7 +35,13 @@ func Import(env map[string]interface{}) {
 	env["cdr"] = func(argv []interface{}) (interface{}, error) {
 		switch cons := argv[0].(type) {
 		case ConsCell:
-			return *cons.Cdr, nil
+			if cons.Cdr == nil {
+				return nil, nil
+			} else {
+				return *cons.Cdr, nil
+			}
+		case nil:
+			return nil, nil
 		}
 		return nil, fmt.Errorf("can only cdr a cons cell but not %v, which is %t", argv[0], argv[0])
 	}
