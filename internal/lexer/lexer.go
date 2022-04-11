@@ -82,7 +82,7 @@ func (lexer *Lexer) consume() string {
 }
 
 func endsToken(c string) bool {
-	token_enders := []string{"(", ")", "/n", "/t", " "}
+	token_enders := []string{"(", ")", "\n", "\t", " "}
 	for _, cc := range token_enders {
 		if c == cc {
 			return true

@@ -130,3 +130,13 @@ func TestWhile(t *testing.T) {
 	assertType(t, token.LB, tokens[0].TokenType)
 	assertType(t, token.WHILE, tokens[1].TokenType)
 }
+
+func TestWorksWithWhitespace(t * testing.T) {
+	input := `l
+	
+	`
+	lex := NewLexer(input)
+	tokens, _ := lex.GetTokens()
+	assertType(t, token.KEYWORD, tokens[0].TokenType)
+	assertString(t, "l", tokens[0].Lexeme)
+}
