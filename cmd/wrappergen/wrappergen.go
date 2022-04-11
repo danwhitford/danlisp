@@ -38,6 +38,10 @@ func main() {
 		}},
 	}
 
+	wrappers := []Wrapper{
+		stringsWrapper,
+	}
+
 	fs := template.FuncMap{"arglist": func(argtypes []string) string {
 		argvs := make([]string, 0)
 		for i, el := range argtypes {
@@ -51,15 +55,22 @@ func main() {
 		log.Panic(err)
 	}
 
-	f, err := os.Create(stringsWrapper.Pkg + "wrapper.go")
+	err = os.MkdirAll(".generated", os.ModePerm)
 	if err != nil {
 		log.Panic(err)
 	}
-	defer f.Close()
-	b := bufio.NewWriter(f)
-	err = t.Execute(b, stringsWrapper)
-	if err != nil {
-		log.Panic(err)
+
+	for _, wrapper := range wrappers {
+		f, err := os.Create(".generated/" + wrapper.Pkg + "wrapper.go")
+		if err != nil {
+			log.Panic(err)
+		}
+		defer f.Close()
+		b := bufio.NewWriter(f)
+		err = t.Execute(b, wrapper)
+		if err != nil {
+			log.Panic(err)
+		}
+		b.Flush()
 	}
-	b.Flush()
 }
