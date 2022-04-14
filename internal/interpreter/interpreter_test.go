@@ -306,3 +306,18 @@ func TestCdrNil(t *testing.T) {
 		t.Fatalf("Expected nil but got %v", ret)
 	}
 }
+
+func TestPrintType(t * testing.T) {
+	intr := NewInterpreter()
+	sources := []string{"(set i 5) (type i)", `(set s "foo") (type s)`, "(set l (list 1 2 3)) (type l)"}
+	expected := []string{"float64", "string", "cons.ConsCell"}
+
+	for i, s := range sources {
+		exprs := getExpressions(s)
+		ret, err := intr.Interpret(exprs)
+		if err != nil {
+			t.Fatalf("Not expecting error but got %v", err)
+		}
+		assertString(t, expected[i], ret.(string))
+	}		
+}

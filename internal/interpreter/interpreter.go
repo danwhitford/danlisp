@@ -8,6 +8,7 @@ import (
 	"github.com/shaftoe44/danlisp/internal/expr"
 	"github.com/shaftoe44/danlisp/internal/stdlib/datastructures/cons"
 	"github.com/shaftoe44/danlisp/internal/stdlib/wrappers"
+	"github.com/shaftoe44/danlisp/internal/stdlib/danreflect"
 )
 
 type Interpreter struct {
@@ -183,6 +184,7 @@ func NewEnvironment() map[string]interface{} {
 
 	cons.Import(env)
 	stringswrapper.Import(env)
+	danreflect.Import(env)
 
 	return env
 }
