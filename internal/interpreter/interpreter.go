@@ -7,6 +7,7 @@ import (
 	"github.com/shaftoe44/danlisp/internal/callable"
 	"github.com/shaftoe44/danlisp/internal/expr"
 	"github.com/shaftoe44/danlisp/internal/stdlib/datastructures/cons"
+	"github.com/shaftoe44/danlisp/internal/stdlib/datastructures/list"
 	"github.com/shaftoe44/danlisp/internal/stdlib/wrappers"
 	"github.com/shaftoe44/danlisp/internal/stdlib/danreflect"
 )
@@ -185,6 +186,7 @@ func NewEnvironment() map[string]interface{} {
 	cons.Import(env)
 	stringswrapper.Import(env)
 	danreflect.Import(env)
+	list.Import(env)
 
 	return env
 }

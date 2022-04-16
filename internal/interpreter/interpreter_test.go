@@ -231,16 +231,6 @@ func TestCreateCons(t *testing.T) {
 	}
 }
 
-func TestConsNiceError(t *testing.T) {
-	exprs := getExpressions("(cons 1 2)")
-	intr := NewInterpreter()
-	_, err := intr.Interpret(exprs)
-	if err == nil {
-		t.Fatal("Expecting an error")
-	}
-	assertString(t, err.Error(), "could not cons, the value 2 was not a ConsCell but a float64")
-}
-
 func TestCar(t *testing.T) {
 	exprs := getExpressions(`
 		(set x (cons 1 (cons 2 nil)))
@@ -277,8 +267,8 @@ func TestListFunc(t *testing.T) {
 		t.Fatalf("Not expecting error but got %v", err)
 	}
 	assertNumber(t, 1, ret.(cons.ConsCell).Car.(float64))
-	assertNumber(t, 2, ret.(cons.ConsCell).Cdr.Car.(float64))
-	assertNumber(t, 3, ret.(cons.ConsCell).Cdr.Cdr.Car.(float64))
+	assertNumber(t, 2, ret.(cons.ConsCell).Cdr.(cons.ConsCell).Car.(float64))
+	assertNumber(t, 3, ret.(cons.ConsCell).Cdr.(cons.ConsCell).Cdr.(cons.ConsCell).Car.(float64))
 }
 
 func TestCarNil(t *testing.T) {

@@ -1,21 +1,40 @@
 package cons
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type ConsCell struct {
 	Car interface{}
-	Cdr *ConsCell
+	Cdr interface{}
 }
 
-func Cons(car interface{}, cdr *ConsCell) ConsCell {
+func Cons(car interface{}, cdr interface{}) ConsCell {
 	return ConsCell{Car: car, Cdr: cdr}
+}
+
+func (cell ConsCell) String() string {
+	var b strings.Builder
+	var a []string
+
+	switch cdr := cell.Cdr.(type) {
+	case interface{}:
+		a = append(a, fmt.Sprint(cdr))
+	}
+
+	fmt.Fprint(&b, "(")
+	fmt.Fprint(&b, a)
+	fmt.Fprint(&b, ")")
+	
+	return b.String()
 }
 
 func Import(env map[string]interface{}) {
 	env["cons"] = func(argv []interface{}) (interface{}, error) {
 		switch cdr := argv[1].(type) {
-		case ConsCell:
-			return Cons(argv[0], &cdr), nil
+		case interface{}:
+			return Cons(argv[0], cdr), nil
 		case nil:
 			return Cons(argv[0], nil), nil
 		}
@@ -38,27 +57,11 @@ func Import(env map[string]interface{}) {
 			if cons.Cdr == nil {
 				return nil, nil
 			} else {
-				return *cons.Cdr, nil
+				return cons.Cdr, nil
 			}
 		case nil:
 			return nil, nil
 		}
 		return nil, fmt.Errorf("can only cdr a cons cell but not %v, which is %t", argv[0], argv[0])
-	}
-
-	env["list"] = func(argv []interface{}) (interface{}, error) {
-		var val interface{}
-		var outer ConsCell
-		for l := len(argv) - 1; l >= 0; l-- {
-			switch cdr := val.(type) {
-			case nil:
-				outer = Cons(argv[l], nil)
-			case ConsCell:
-				outer = Cons(argv[l], &cdr)
-
-			}
-			val = outer
-		}
-		return outer, nil
 	}
 }
