@@ -311,3 +311,15 @@ func TestPrintType(t * testing.T) {
 		assertString(t, expected[i], ret.(string))
 	}		
 }
+
+func TestEmptyListIsNil(t* testing.T) {
+	exprs := getExpressions(`(list)`)
+	intr := NewInterpreter()
+	ret, err := intr.Interpret(exprs)
+	if err != nil {
+		t.Fatalf("Not expecting error but got %v", err)
+	}
+	if ret != nil {
+		t.Fatalf("Expected nil but got %v", ret)
+	}
+}

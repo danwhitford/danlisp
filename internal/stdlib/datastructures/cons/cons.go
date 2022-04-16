@@ -2,7 +2,6 @@ package cons
 
 import (
 	"fmt"
-	"strings"
 )
 
 type ConsCell struct {
