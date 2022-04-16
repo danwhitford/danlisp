@@ -14,22 +14,6 @@ func Cons(car interface{}, cdr interface{}) ConsCell {
 	return ConsCell{Car: car, Cdr: cdr}
 }
 
-func (cell ConsCell) String() string {
-	var b strings.Builder
-	var a []string
-
-	switch cdr := cell.Cdr.(type) {
-	case interface{}:
-		a = append(a, fmt.Sprint(cdr))
-	}
-
-	fmt.Fprint(&b, "(")
-	fmt.Fprint(&b, a)
-	fmt.Fprint(&b, ")")
-	
-	return b.String()
-}
-
 func Import(env map[string]interface{}) {
 	env["cons"] = func(argv []interface{}) (interface{}, error) {
 		switch cdr := argv[1].(type) {
