@@ -15,11 +15,6 @@ ______            _     _
 
 `go install github.com/shaftoe44/danlisp/cmd/danlisp@latest`
 
-### From binary
-
-Mac binaries can be found in the [releases](https://github.com/shaftoe44/danlisp/releases) section of this repo.
-## Use
-
 To get a basic REPL
 
 `$GOPATH/bin/danlisp`
