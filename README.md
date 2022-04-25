@@ -9,19 +9,15 @@ ______            _     _
                              |_|    
 ```
 
-## Installation
-
-### With go
-
-`go install github.com/danwhitford/danlisp/cmd/danlisp@latest`
+## Running
 
 To get a basic REPL
 
-`$GOPATH/bin/danlisp`
+`go run cmd/danlisp/danlisp.go`
 
 To run a file
 
-`$GOPATH/bin/danlisp <filename>`
+`go run cmd/danlisp/danlisp.go <filename>`
 
 ## Examples
 
