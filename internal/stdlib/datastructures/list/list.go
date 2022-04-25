@@ -22,4 +22,13 @@ func Import(env map[string]interface{}) {
 		}
 		return outer, nil
 	}
+
+	env["nth"] = func(argv []interface{}) (interface{}, error) {
+		hd := argv[0].(cons.ConsCell)
+		nth := argv[1].(float64)
+		for nth > 0 {
+			hd = hd.Cdr.(cons.ConsCell)
+		}
+		return hd.Car, nil
+	}
 }
