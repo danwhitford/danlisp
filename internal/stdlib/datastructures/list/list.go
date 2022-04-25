@@ -1,6 +1,6 @@
 package list
 
-import "github.com/shaftoe44/danlisp/internal/stdlib/datastructures/cons"
+import "github.com/danwhitford/danlisp/internal/stdlib/datastructures/cons"
 
 func Import(env map[string]interface{}) {
 	env["list"] = func(argv []interface{}) (interface{}, error) {
@@ -8,7 +8,7 @@ func Import(env map[string]interface{}) {
 			return nil, nil
 		}
 
-		var val interface{}		
+		var val interface{}
 		var outer cons.ConsCell
 		for l := len(argv) - 1; l >= 0; l-- {
 			switch cdr := val.(type) {

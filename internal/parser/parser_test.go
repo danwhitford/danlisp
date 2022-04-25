@@ -3,8 +3,8 @@ package parser
 import (
 	"testing"
 
-	"github.com/shaftoe44/danlisp/internal/expr"
-	"github.com/shaftoe44/danlisp/internal/lexer"
+	"github.com/danwhitford/danlisp/internal/expr"
+	"github.com/danwhitford/danlisp/internal/lexer"
 )
 
 func assertString(t *testing.T, expected, actual string) {

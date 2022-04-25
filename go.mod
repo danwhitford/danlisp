@@ -1,3 +1,3 @@
-module github.com/shaftoe44/danlisp
+module github.com/danwhitford/danlisp
 
 go 1.18

@@ -1,7 +1,7 @@
 package interpreter
 
 import (
-	"github.com/shaftoe44/danlisp/internal/expr"
+	"github.com/danwhitford/danlisp/internal/expr"
 )
 
 type ICallable interface {

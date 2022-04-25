@@ -13,7 +13,7 @@ ______            _     _
 
 ### With go
 
-`go install github.com/shaftoe44/danlisp/cmd/danlisp@latest`
+`go install github.com/danwhitford/danlisp/cmd/danlisp@latest`
 
 To get a basic REPL
 
@@ -25,7 +25,7 @@ To run a file
 
 ## Examples
 
-There are example programs [here](https://github.com/shaftoe44/danlisp/tree/main/examples)
+There are example programs [here](https://github.com/danwhitford/danlisp/tree/main/examples)
 
 ## Syntax
 

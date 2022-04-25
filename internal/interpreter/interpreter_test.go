@@ -3,10 +3,10 @@ package interpreter
 import (
 	"testing"
 
-	"github.com/shaftoe44/danlisp/internal/expr"
-	"github.com/shaftoe44/danlisp/internal/lexer"
-	"github.com/shaftoe44/danlisp/internal/parser"
-	"github.com/shaftoe44/danlisp/internal/stdlib/datastructures/cons"
+	"github.com/danwhitford/danlisp/internal/expr"
+	"github.com/danwhitford/danlisp/internal/lexer"
+	"github.com/danwhitford/danlisp/internal/parser"
+	"github.com/danwhitford/danlisp/internal/stdlib/datastructures/cons"
 )
 
 func assertString(t *testing.T, expected, actual string) {
@@ -297,7 +297,7 @@ func TestCdrNil(t *testing.T) {
 	}
 }
 
-func TestPrintType(t * testing.T) {
+func TestPrintType(t *testing.T) {
 	intr := NewInterpreter()
 	sources := []string{"(set i 5) (type i)", `(set s "foo") (type s)`, "(set l (list 1 2 3)) (type l)"}
 	expected := []string{"float64", "string", "cons.ConsCell"}
@@ -309,10 +309,10 @@ func TestPrintType(t * testing.T) {
 			t.Fatalf("Not expecting error but got %v", err)
 		}
 		assertString(t, expected[i], ret.(string))
-	}		
+	}
 }
 
-func TestEmptyListIsNil(t* testing.T) {
+func TestEmptyListIsNil(t *testing.T) {
 	exprs := getExpressions(`(list)`)
 	intr := NewInterpreter()
 	ret, err := intr.Interpret(exprs)

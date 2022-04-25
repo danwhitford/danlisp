@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/shaftoe44/danlisp/internal/token"
+	"github.com/danwhitford/danlisp/internal/token"
 )
 
 type Lexer struct {

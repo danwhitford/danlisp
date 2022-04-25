@@ -4,9 +4,9 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"github.com/shaftoe44/danlisp/internal/interpreter"
-	"github.com/shaftoe44/danlisp/internal/lexer"
-	"github.com/shaftoe44/danlisp/internal/parser"
+	"github.com/danwhitford/danlisp/internal/interpreter"
+	"github.com/danwhitford/danlisp/internal/lexer"
+	"github.com/danwhitford/danlisp/internal/parser"
 	"os"
 )
 

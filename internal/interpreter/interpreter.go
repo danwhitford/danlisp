@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/shaftoe44/danlisp/internal/callable"
-	"github.com/shaftoe44/danlisp/internal/expr"
-	"github.com/shaftoe44/danlisp/internal/stdlib/datastructures/cons"
-	"github.com/shaftoe44/danlisp/internal/stdlib/datastructures/list"
-	"github.com/shaftoe44/danlisp/internal/stdlib/wrappers"
-	"github.com/shaftoe44/danlisp/internal/stdlib/danreflect"
+	"github.com/danwhitford/danlisp/internal/callable"
+	"github.com/danwhitford/danlisp/internal/expr"
+	"github.com/danwhitford/danlisp/internal/stdlib/danreflect"
+	"github.com/danwhitford/danlisp/internal/stdlib/datastructures/cons"
+	"github.com/danwhitford/danlisp/internal/stdlib/datastructures/list"
+	stringswrapper "github.com/danwhitford/danlisp/internal/stdlib/wrappers"
 )
 
 type Interpreter struct {

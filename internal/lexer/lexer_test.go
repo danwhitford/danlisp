@@ -3,7 +3,7 @@ package lexer
 import (
 	"testing"
 
-	"github.com/shaftoe44/danlisp/internal/token"
+	"github.com/danwhitford/danlisp/internal/token"
 )
 
 func assertType(t *testing.T, expected, actual token.TokenType) {
@@ -131,7 +131,7 @@ func TestWhile(t *testing.T) {
 	assertType(t, token.WHILE, tokens[1].TokenType)
 }
 
-func TestWorksWithWhitespace(t * testing.T) {
+func TestWorksWithWhitespace(t *testing.T) {
 	input := `l
 	
 	`
