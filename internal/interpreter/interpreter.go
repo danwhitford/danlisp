@@ -183,6 +183,11 @@ func NewEnvironment() map[string]interface{} {
 		return p
 	}
 
+	env["version"] = func(argv []interface{}) interface{} {
+		p, _ :=  fmt.Println("test versioning")
+		return p
+	}
+
 	cons.Import(env)
 	stringswrapper.Import(env)
 	danreflect.Import(env)
