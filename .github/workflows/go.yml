@@ -30,7 +30,7 @@ jobs:
         version: "2021.1.1"
 
     - name: Build
-      run: GOOS=darwin GOARCH=amd64 go build ./cmd/danlisp go build -v ./cmd/danlisp
+      run: GOOS=darwin GOARCH=amd64 go build -v ./cmd/danlisp
 
     - name: Auto-release
       uses: "marvinpinto/action-automatic-releases@latest"
