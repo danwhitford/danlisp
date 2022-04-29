@@ -32,15 +32,3 @@ jobs:
     - name: Build
       run: GOOS=darwin GOARCH=amd64 go build -v ./cmd/danlisp
 
-    - name: Auto-release
-      uses: "marvinpinto/action-automatic-releases@latest"
-      with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "latest"
-        prerelease: false
-        draft: false
-        title: "Latest Build"
-        files: |
-          danlisp
-          go.mod
-          LICENSE
