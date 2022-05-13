@@ -8,6 +8,7 @@ import (
 	"github.com/danwhitford/danlisp/internal/lexer"
 	"github.com/danwhitford/danlisp/internal/parser"
 	"os"
+	"strings"
 )
 
 var header string = `
@@ -25,10 +26,16 @@ func repl() {
 	intr := interpreter.NewInterpreter()
 	var lxr lexer.Lexer
 	var psr parser.Parser
+	var buf strings.Builder
 
 	fmt.Println(header)
 	for {
-		fmt.Print(">>> ")
+		if buf.Len() > 0 {
+			fmt.Print("... ")
+		} else {
+			fmt.Print(">>> ")
+		}
+
 		scanned := scanner.Scan()
 		if !scanned {
 			break
@@ -36,28 +43,36 @@ func repl() {
 		line := scanner.Text()
 
 		if len(line) < 1 {
-			continue
-		}
+			if buf.Len() < 1 {
+				continue
+			}
+			stmt := buf.String()
+			lxr = lexer.NewLexer(stmt)
+			tokens, err := lxr.GetTokens()
+			if err != nil {
+				fmt.Println(err.Error())
+				buf.Reset()
+				continue
+			}
+			psr = parser.NewParser(tokens)
+			exprs, err := psr.GetExpressions()
+			if err != nil {
+				fmt.Println(err.Error())
+				buf.Reset()
+				continue
+			}
+			res, err := intr.Interpret(exprs)
+			if err != nil {
+				fmt.Println(err.Error())
+				buf.Reset()
+				continue
+			}
 
-		lxr = lexer.NewLexer(line)
-		tokens, err := lxr.GetTokens()
-		if err != nil {
-			fmt.Println(err.Error())
-			continue
+			fmt.Printf("%v\n", res)
+			buf.Reset()
+		} else {
+			buf.WriteString(line)
 		}
-		psr = parser.NewParser(tokens)
-		exprs, err := psr.GetExpressions()
-		if err != nil {
-			fmt.Println(err.Error())
-			continue
-		}
-		res, err := intr.Interpret(exprs)
-		if err != nil {
-			fmt.Println(err.Error())
-			continue
-		}
-
-		fmt.Printf("%v\n", res)
 	}
 }
 
