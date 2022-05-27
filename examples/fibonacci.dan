@@ -1,12 +1,10 @@
 
-(set i 0)
 (set a 1)
 (set b 1)
 
 (prn "Printing first ten fibonacci numbers")
-(while (lt i 10)
+(for (set i 0) (lt i 10) (set i (+ i 1))
     (prn a)
     (set tmp a)
     (set a b)
-    (set b (+ b tmp))
-    (set i (+ i 1)))
+    (set b (+ b tmp)))
