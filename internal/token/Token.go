@@ -11,6 +11,7 @@ const (
 	IF
 	WHILE
 	DEFN
+	FOR
 )
 
 type Token struct {

@@ -133,3 +133,24 @@ func TestWhile(t *testing.T) {
 		t.Fatal("Condition wasn't right")
 	}
 }
+
+func TestFor(t *testing.T) {
+	input := `(for (set i 0) (lt i 10) (set i (+ i 1)) (prn i))`
+	lex := lexer.NewLexer(input)
+	tokens, _ := lex.GetTokens()
+	parser := NewParser(tokens)
+	exprs, _ := parser.GetExpressions()
+	forexpr, ok := exprs[0].(expr.For)
+	if !ok {
+		t.Fatalf("Conversion to For expression failed, got %T", exprs[0])
+	}
+	if _, ok := forexpr.Initialiser.(expr.Set); !ok {
+		t.Fatal("Init wasn't right")
+	}
+	if forexpr.Cond.(expr.Seq).Exprs[0].(expr.Symbol).Name != "lt" {
+		t.Fatal("Condition wasn't right")
+	}
+	if _, ok := forexpr.Initialiser.(expr.Set); !ok {
+		t.Fatal("Step wasn't right")
+	}
+}

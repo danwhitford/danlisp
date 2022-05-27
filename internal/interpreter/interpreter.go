@@ -9,7 +9,7 @@ import (
 	"github.com/danwhitford/danlisp/internal/stdlib/danreflect"
 	"github.com/danwhitford/danlisp/internal/stdlib/datastructures/cons"
 	"github.com/danwhitford/danlisp/internal/stdlib/datastructures/list"
-	stringswrapper "github.com/danwhitford/danlisp/internal/stdlib/wrappers"
+	"github.com/danwhitford/danlisp/internal/stdlib/wrappers"
 )
 
 type Interpreter struct {
@@ -49,6 +49,8 @@ func (interpreter *Interpreter) eval(ex expr.Expr) (interface{}, error) {
 		return interpreter.evalWhile(v)
 	case expr.Defn:
 		return interpreter.evalDefun(v)
+	case expr.For:
+		return interpreter.evalFor(v)
 	}
 
 	return nil, fmt.Errorf("don't know how to eval this thing %v of type %T", ex, ex)
@@ -62,6 +64,37 @@ func (interpreter *Interpreter) evalDefun(ex expr.Defn) (interface{}, error) {
 	callable := callable.Callable{Arity: len(arglist), Args: arglist, Body: ex.Body}
 	interpreter.environment[ex.Name.Name] = callable
 	return nil, nil
+}
+
+func (interpreter *Interpreter) evalFor(ex expr.For) (interface{}, error) {
+	var retval interface{}
+	_, err := interpreter.eval(ex.Initialiser)
+	if err != nil {
+		return nil, err
+	}
+	for {
+		c, err := interpreter.eval(ex.Cond)
+		if err != nil {
+			return nil, err
+		}
+		if !isTruthy(c) {
+			break
+		}
+
+		for _, line := range ex.Body {
+			val, er := interpreter.eval(line)
+			if er != nil {
+				return nil, er
+			}
+			retval = val
+		}
+
+		_, err = interpreter.eval(ex.Step)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return retval, nil
 }
 
 func (interpreter *Interpreter) evalWhile(ex expr.While) (interface{}, error) {
@@ -179,8 +212,8 @@ func NewEnvironment() map[string]interface{} {
 		for _, v := range argv {
 			strs = append(strs, fmt.Sprintf("%v", v))
 		}
-		p, _ := fmt.Println(strings.Join(strs, " "))
-		return p
+		fmt.Println(strings.Join(strs, " "))
+		return nil
 	}
 
 	cons.Register(env)

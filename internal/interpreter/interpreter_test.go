@@ -35,6 +35,16 @@ func getExpressions(input string) []expr.Expr {
 	return exprs
 }
 
+func run(t *testing.T, s string) interface{} {
+	exprs := getExpressions(s)
+	intr := NewInterpreter()
+	ret, err := intr.Interpret(exprs)
+	if err != nil {
+		t.Fatalf("Not expecting error but got %v", err)
+	}
+	return ret
+}
+
 func TestJustNumber(t *testing.T) {
 	exprs := getExpressions("101")
 	intr := NewInterpreter()
@@ -313,13 +323,17 @@ func TestPrintType(t *testing.T) {
 }
 
 func TestEmptyListIsNil(t *testing.T) {
-	exprs := getExpressions(`(list)`)
-	intr := NewInterpreter()
-	ret, err := intr.Interpret(exprs)
-	if err != nil {
-		t.Fatalf("Not expecting error but got %v", err)
-	}
+	ret := run(t, `(list)`)
 	if ret != nil {
 		t.Fatalf("Expected nil but got %v", ret)
 	}
+}
+
+func TestForLoop(t *testing.T) {
+	ret := run(t, `
+	(set total 0) 
+	(for (set i 0) (lt i 10) (set i (+ i 1))
+		(set total (+ total i)))
+	total`)
+	assertNumber(t, 45, ret.(float64))
 }

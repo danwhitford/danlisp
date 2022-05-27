@@ -35,3 +35,10 @@ type Defn struct {
 	Arglist []Symbol
 	Body    []Expr
 }
+
+type For struct {
+	Initialiser Expr
+	Cond        Expr
+	Step        Expr
+	Body        []Expr
+}

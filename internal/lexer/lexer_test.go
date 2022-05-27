@@ -140,3 +140,11 @@ func TestWorksWithWhitespace(t *testing.T) {
 	assertType(t, token.KEYWORD, tokens[0].TokenType)
 	assertString(t, "l", tokens[0].Lexeme)
 }
+
+func TestFor(t *testing.T) {
+	input := "(for (set i 0) (lt i 10) (set i (+ i 1)) (prn i))"
+	lex := NewLexer(input)
+	tokens, _ := lex.GetTokens()
+	assertType(t, token.LB, tokens[0].TokenType)
+	assertType(t, token.FOR, tokens[1].TokenType)
+}

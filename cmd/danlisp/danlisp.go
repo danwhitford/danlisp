@@ -68,7 +68,9 @@ func repl() {
 				continue
 			}
 
-			fmt.Printf("%v\n", res)
+			if res != nil {
+				fmt.Printf("%v\n", res)
+			}
 			buf.Reset()
 		} else {
 			buf.WriteString(line)

@@ -47,6 +47,8 @@ func (parser *Parser) getExpression() (expr.Expr, error) {
 			return parser.consumeWhile()
 		} else if parser.next().TokenType == token.DEFN {
 			return parser.consumeDefun()
+		} else if parser.next().TokenType == token.FOR {
+			return parser.consumeFor()
 		} else {
 			return parser.consumeSeq()
 		}
@@ -90,6 +92,35 @@ func (parser *Parser) consumeDefun() (expr.Defn, error) {
 	parser.consume() // Consume the RB after function body
 
 	return expr.Defn{Name: fnSymb, Arglist: argList, Body: body}, nil
+}
+
+func (parser *Parser) consumeFor() (expr.For, error) {
+	parser.consume() // Consume the LB
+	parser.consume() // Consume the for
+
+	init, err := parser.getExpression()
+	if err != nil {
+		return expr.For{}, err
+	}
+	cond, err := parser.getExpression()
+	if err != nil {
+		return expr.For{}, err
+	}
+	step, err := parser.getExpression()
+	if err != nil {
+		return expr.For{}, err
+	}
+	body := []expr.Expr{}
+	for parser.current < parser.length && parser.peek().TokenType != token.RB {
+		e, err := parser.getExpression()
+		if err != nil {
+			return expr.For{}, err
+		}
+		body = append(body, e)
+	}
+	parser.consume() // Consume the RB
+
+	return expr.For{Initialiser: init, Cond: cond, Step: step, Body: body}, nil
 }
 
 func (parser *Parser) consumeWhile() (expr.While, error) {
