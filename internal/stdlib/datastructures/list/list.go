@@ -2,7 +2,7 @@ package list
 
 import "github.com/danwhitford/danlisp/internal/stdlib/datastructures/cons"
 
-func Import(env map[string]interface{}) {
+func Register(env map[string]interface{}) {
 	env["list"] = func(argv []interface{}) (interface{}, error) {
 		if len(argv) < 1 {
 			return nil, nil

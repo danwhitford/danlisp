@@ -13,7 +13,7 @@ func Cons(car interface{}, cdr interface{}) ConsCell {
 	return ConsCell{Car: car, Cdr: cdr}
 }
 
-func Import(env map[string]interface{}) {
+func Register(env map[string]interface{}) {
 	env["cons"] = func(argv []interface{}) (interface{}, error) {
 		switch cdr := argv[1].(type) {
 		case interface{}:

@@ -183,10 +183,10 @@ func NewEnvironment() map[string]interface{} {
 		return p
 	}
 
-	cons.Import(env)
-	stringswrapper.Import(env)
-	danreflect.Import(env)
-	list.Import(env)
+	cons.Register(env)
+	stringswrapper.Register(env)
+	danreflect.Register(env)
+	list.Register(env)
 
 	return env
 }
