@@ -12,6 +12,7 @@ const (
 	WHILE
 	DEFN
 	FOR
+	UPSET
 )
 
 type Token struct {

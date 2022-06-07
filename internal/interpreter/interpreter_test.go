@@ -337,3 +337,11 @@ func TestForLoop(t *testing.T) {
 	total`)
 	assertNumber(t, 45, ret.(float64))
 }
+
+func TestUpSet(t *testing.T) {
+	ret := run(t, `
+	(set i 0)
+	(up i (+ 1))
+	i`)
+	assertNumber(t, 1, ret.(float64))
+}

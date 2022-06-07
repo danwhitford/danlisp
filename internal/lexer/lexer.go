@@ -52,6 +52,7 @@ func (lexer *Lexer) GetTokens() ([]token.Token, error) {
 			lexer.current++
 		} else {
 			lexeme := lexer.consumeLexeme()
+			// TODO switch stmt
 			if lexeme == "set" {
 				tokens = append(tokens, token.Token{TokenType: token.SET, Lexeme: lexeme, Line: lexer.line})
 			} else if lexeme == "if" {
@@ -64,6 +65,8 @@ func (lexer *Lexer) GetTokens() ([]token.Token, error) {
 				tokens = append(tokens, token.Token{TokenType: token.LITERAL, Lexeme: lexeme, Value: nil, Line: lexer.line})
 			} else if lexeme == "for" {
 				tokens = append(tokens, token.Token{TokenType: token.FOR, Lexeme: lexeme, Line: lexer.line})
+			} else if lexeme == "up" {
+				tokens = append(tokens, token.Token{TokenType: token.UPSET, Lexeme: lexeme, Line: lexer.line})
 			} else {
 				tokens = append(tokens, token.Token{TokenType: token.KEYWORD, Lexeme: lexeme, Line: lexer.line})
 			}

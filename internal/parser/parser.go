@@ -39,6 +39,7 @@ func (parser *Parser) GetExpressions() ([]expr.Expr, error) {
 func (parser *Parser) getExpression() (expr.Expr, error) {
 	switch parser.peek().TokenType {
 	case token.LB:
+		// TODO: nested switch
 		if parser.next().TokenType == token.SET {
 			return parser.consumeSet()
 		} else if parser.next().TokenType == token.IF {
@@ -49,6 +50,8 @@ func (parser *Parser) getExpression() (expr.Expr, error) {
 			return parser.consumeDefun()
 		} else if parser.next().TokenType == token.FOR {
 			return parser.consumeFor()
+		} else if parser.next().TokenType == token.UPSET {
+			return parser.consumeUpset()
 		} else {
 			return parser.consumeSeq()
 		}
@@ -57,6 +60,14 @@ func (parser *Parser) getExpression() (expr.Expr, error) {
 	default:
 		return parser.consumeAtom()
 	}
+}
+
+func (parser *Parser) consumeUpset() (expr.Set, error) {
+		// TODO Make a consumeExpected func
+		parser.consume() // Consume the LB
+		parser.consume() // Consume the defun
+
+		symb := parser.consume()
 }
 
 func (parser *Parser) consumeDefun() (expr.Defn, error) {
